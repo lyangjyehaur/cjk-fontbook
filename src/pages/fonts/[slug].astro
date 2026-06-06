@@ -1,0 +1,122 @@
+---
+import { Badge } from "../../components/Badge";
+import { FontPreview } from "../../components/FontPreview";
+import Layout from "../../layouts/Layout.astro";
+import { getAllFonts, getFontBySlug } from "../../lib/db/queries";
+
+export async function getStaticPaths() {
+  const fonts = await getAllFonts();
+  return fonts.map((font) => ({
+    params: { slug: font.slug },
+  }));
+}
+
+const font = await getFontBySlug(Astro.params.slug ?? "");
+
+if (!font) {
+  return Astro.redirect("/");
+}
+
+const description =
+  font.description ?? `${font.name} in the CJK Fontbook open-source catalog.`;
+const links = [
+  { label: "Source", href: font.sourceUrl },
+  { label: "Repository", href: font.repoUrl },
+  { label: "Homepage", href: font.homepageUrl },
+].filter((link): link is { label: string; href: string } => Boolean(link.href));
+---
+
+<Layout title={font.name} description={description} ogType="article">
+  <article class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+    <header class="grid gap-8 lg:grid-cols-[1fr_320px]">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.18em] text-vermilion">
+          Font detail
+        </p>
+        <h1 class="mt-4 text-5xl font-semibold tracking-normal text-ink-900 dark:text-ink-50">
+          {font.name}
+        </h1>
+        {font.displayName && font.displayName !== font.name ? (
+          <p class="mt-3 text-2xl text-ink-700 dark:text-ink-100">
+            {font.displayName}
+          </p>
+        ) : null}
+        <p class="mt-5 max-w-3xl text-lg leading-8 text-ink-700 dark:text-ink-100">
+          {description}
+        </p>
+      </div>
+      <aside class="rounded-lg border border-ink-200 bg-white/78 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.06]">
+        <dl class="space-y-4 text-sm">
+          <div>
+            <dt class="font-medium text-ink-900 dark:text-ink-50">License</dt>
+            <dd class="mt-1 text-ink-700 dark:text-ink-100">{font.license}</dd>
+          </div>
+          <div>
+            <dt class="font-medium text-ink-900 dark:text-ink-50">Author</dt>
+            <dd class="mt-1 text-ink-700 dark:text-ink-100">{font.author ?? "Unknown"}</dd>
+          </div>
+          <div>
+            <dt class="font-medium text-ink-900 dark:text-ink-50">Variable</dt>
+            <dd class="mt-1 text-ink-700 dark:text-ink-100">{font.isVariable ? "Yes" : "No"}</dd>
+          </div>
+        </dl>
+      </aside>
+    </header>
+
+    <section class="mt-8 flex flex-wrap gap-2" aria-label="Font metadata">
+      <Badge tone="category">{font.category}</Badge>
+      <Badge tone="license">{font.license}</Badge>
+      {font.languages.map((language) => (
+        <Badge tone="language">{language.languageCode} {language.coverageLevel}</Badge>
+      ))}
+      {font.tags.map((tag) => (
+        <Badge>{tag}</Badge>
+      ))}
+    </section>
+
+    <section class="mt-10" aria-labelledby="preview-heading">
+      <h2 id="preview-heading" class="mb-4 text-2xl font-semibold text-ink-900 dark:text-ink-50">
+        Preview
+      </h2>
+      <FontPreview client:load font={font} loadOnMount />
+    </section>
+
+    <section class="mt-10 grid gap-6 lg:grid-cols-2">
+      <div class="rounded-lg border border-ink-200 bg-white/78 p-6 dark:border-white/10 dark:bg-white/[0.06]">
+        <h2 class="text-xl font-semibold text-ink-900 dark:text-ink-50">
+          Links
+        </h2>
+        <dl class="mt-5 space-y-3 text-sm">
+          {links.map((link) => (
+            <div>
+              <dt class="font-medium text-ink-900 dark:text-ink-50">{link.label}</dt>
+              <dd class="mt-1">
+                <a class="break-all text-vermilion hover:underline" href={link.href}>
+                  {link.href}
+                </a>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      <div class="rounded-lg border border-ink-200 bg-white/78 p-6 dark:border-white/10 dark:bg-white/[0.06]">
+        <h2 class="text-xl font-semibold text-ink-900 dark:text-ink-50">
+          CSS usage
+        </h2>
+        <pre class="mt-5 overflow-x-auto rounded-md bg-ink-900 p-4 text-sm text-ink-50"><code>{font.previewCssUrl ? `@import url("${font.previewCssUrl}");\n\n.example {\n  font-family: ${font.cssFontFamily ?? `"${font.name}", sans-serif`};\n}` : `.example {\n  font-family: ${font.cssFontFamily ?? `"${font.name}", sans-serif`};\n}`}</code></pre>
+      </div>
+    </section>
+
+    {font.notes ? (
+      <section class="mt-6 rounded-lg border border-ink-200 bg-white/78 p-6 dark:border-white/10 dark:bg-white/[0.06]">
+        <h2 class="text-xl font-semibold text-ink-900 dark:text-ink-50">
+          Notes
+        </h2>
+        <p class="mt-3 leading-7 text-ink-700 dark:text-ink-100">
+          {font.notes}
+        </p>
+      </section>
+    ) : null}
+  </article>
+</Layout>

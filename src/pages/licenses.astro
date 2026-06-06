@@ -1,0 +1,49 @@
+---
+import { Badge } from "../components/Badge";
+import Layout from "../layouts/Layout.astro";
+import { getLicenseGroups } from "../lib/db/queries";
+
+const licenseGroups = await getLicenseGroups();
+---
+
+<Layout
+  title="Licenses"
+  description="Open-source licenses represented in the CJK Fontbook catalog."
+>
+  <section class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+    <h1 class="text-4xl font-semibold text-ink-900 dark:text-ink-50">
+      Licenses
+    </h1>
+    <p class="mt-3 max-w-2xl text-ink-700 dark:text-ink-100">
+      License summaries are catalog pointers, not legal advice. Always review the upstream font repository before shipping a font.
+    </p>
+
+    <div class="mt-10 space-y-6">
+      {licenseGroups.map((group) => (
+        <article class="rounded-lg border border-ink-200 bg-white/78 p-6 shadow-sm dark:border-white/10 dark:bg-white/[0.06]">
+          <div class="flex flex-wrap items-center gap-3">
+            <h2 class="text-2xl font-semibold text-ink-900 dark:text-ink-50">
+              {group.license}
+            </h2>
+            <Badge tone="license">{group.fonts.length} fonts</Badge>
+          </div>
+          <ul class="mt-5 grid gap-3 sm:grid-cols-2">
+            {group.fonts.map((font) => (
+              <li>
+                <a
+                  class="block rounded-md border border-ink-200 bg-white/70 p-4 text-ink-900 transition hover:border-vermilion hover:text-vermilion dark:border-white/10 dark:bg-white/5 dark:text-ink-50"
+                  href={`/fonts/${font.slug}/`}
+                >
+                  <span class="block font-medium">{font.name}</span>
+                  <span class="mt-1 block text-sm text-ink-700 dark:text-ink-100">
+                    {font.category} · {font.languages.map((language) => language.languageCode).join(", ")}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </section>
+</Layout>

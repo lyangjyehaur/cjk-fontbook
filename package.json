@@ -1,0 +1,34 @@
+{
+  "name": "cjk-fontbook",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "test": "vitest run",
+    "db:push": "drizzle-kit push",
+    "db:seed": "tsx scripts/seed.ts"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/preact": "^4.0.0",
+    "@astrojs/tailwind": "^6.0.2",
+    "@fontsource-variable/inter": "^5.2.5",
+    "@tailwindcss/typography": "^0.5.15",
+    "astro": "^5.0.0",
+    "drizzle-orm": "^0.38.0",
+    "lucide-preact": "^0.468.0",
+    "pg": "^8.13.1",
+    "preact": "^10.25.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/pg": "^8.11.10",
+    "drizzle-kit": "^0.30.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
