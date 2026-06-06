@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { eq } from "drizzle-orm";
 import { catalogFonts } from "../src/lib/catalog";
 import { createDb } from "../src/lib/db";
