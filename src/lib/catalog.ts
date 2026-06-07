@@ -34,6 +34,7 @@ export interface FontRecord {
   category: Category;
   isVariable: boolean;
   isSourceHanDerivative: boolean;
+  isHeritageGlyph: boolean;
   cssFontFamily?: string;
   previewCssUrl?: string;
   notes?: string;
@@ -65,6 +66,7 @@ export const catalogFonts: FontRecord[] = [
     category: "sans",
     isVariable: false,
     isSourceHanDerivative: false,
+    isHeritageGlyph: false,
     cssFontFamily: "'Noto Sans SC', 'Noto Sans CJK SC', sans-serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap",
@@ -88,6 +90,7 @@ export const catalogFonts: FontRecord[] = [
     category: "serif",
     isVariable: false,
     isSourceHanDerivative: false,
+    isHeritageGlyph: false,
     cssFontFamily: "'Noto Serif SC', 'Noto Serif CJK SC', serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap",
@@ -111,6 +114,7 @@ export const catalogFonts: FontRecord[] = [
     category: "sans",
     isVariable: false,
     isSourceHanDerivative: false,
+    isHeritageGlyph: false,
     cssFontFamily: "'Source Han Sans', 'Noto Sans CJK SC', sans-serif",
     notes:
       "Same glyph project as Noto Sans CJK with different packaging and naming. No web preview CSS is bundled by this catalog.",
@@ -132,6 +136,7 @@ export const catalogFonts: FontRecord[] = [
     category: "serif",
     isVariable: false,
     isSourceHanDerivative: false,
+    isHeritageGlyph: false,
     cssFontFamily: "'Source Han Serif', 'Noto Serif CJK SC', serif",
     notes:
       "Same glyph project as Noto Serif CJK with different packaging and naming. No web preview CSS is bundled by this catalog.",
@@ -152,6 +157,7 @@ export const catalogFonts: FontRecord[] = [
     category: "mono",
     isVariable: false,
     isSourceHanDerivative: true,
+    isHeritageGlyph: false,
     cssFontFamily: "'Sarasa Gothic', 'Sarasa Mono SC', monospace",
     notes:
       "The project ships many regional and width variants. Choose the package that matches your script and code style needs.",
@@ -172,6 +178,7 @@ export const catalogFonts: FontRecord[] = [
     category: "handwriting",
     isVariable: false,
     isSourceHanDerivative: false,
+    isHeritageGlyph: false,
     cssFontFamily: "'LXGW WenKai TC', 'LXGW WenKai', cursive",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap",
@@ -197,6 +204,7 @@ export const catalogFonts: FontRecord[] = [
     category: "sans",
     isVariable: false,
     isSourceHanDerivative: false,
+    isHeritageGlyph: false,
     cssFontFamily: "'M PLUS 1p', sans-serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700&display=swap",
@@ -217,6 +225,7 @@ export const catalogFonts: FontRecord[] = [
     category: "sans",
     isVariable: false,
     isSourceHanDerivative: false,
+    isHeritageGlyph: false,
     cssFontFamily: "'Zen Kaku Gothic New', sans-serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700&display=swap",
@@ -237,6 +246,7 @@ export const catalogFonts: FontRecord[] = [
     category: "rounded",
     isVariable: false,
     isSourceHanDerivative: false,
+    isHeritageGlyph: false,
     cssFontFamily: "'Zen Maru Gothic', sans-serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap",
@@ -257,6 +267,7 @@ export const catalogFonts: FontRecord[] = [
     category: "serif",
     isVariable: false,
     isSourceHanDerivative: false,
+    isHeritageGlyph: false,
     cssFontFamily: "'Shippori Mincho', serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap",
@@ -278,6 +289,7 @@ export const catalogFonts: FontRecord[] = [
     category: "sans",
     isVariable: true,
     isSourceHanDerivative: true,
+    isHeritageGlyph: false,
     cssFontFamily: "'Pretendard', sans-serif",
     notes:
       "No external preview CSS is loaded by this MVP. Install or self-host Pretendard for production usage.",
@@ -298,6 +310,7 @@ export const catalogFonts: FontRecord[] = [
     category: "mono",
     isVariable: false,
     isSourceHanDerivative: false,
+    isHeritageGlyph: false,
     cssFontFamily: "'D2 Coding', monospace",
     notes:
       "Google Fonts availability can vary; this MVP leaves remote preview CSS disabled unless a verified CSS endpoint is added.",

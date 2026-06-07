@@ -83,6 +83,9 @@ const coverageLabels: Record<string, string> = {
       {font.isSourceHanDerivative ? (
         <Badge tone="source-han">思源系</Badge>
       ) : null}
+      {font.isHeritageGlyph ? (
+        <Badge tone="heritage">傳承字形</Badge>
+      ) : null}
       {font.languages.map((language) => (
         <Badge tone="language">{language.languageCode} {coverageLabels[language.coverageLevel] ?? language.coverageLevel}</Badge>
       ))}

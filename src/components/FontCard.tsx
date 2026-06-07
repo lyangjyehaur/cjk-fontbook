@@ -44,6 +44,9 @@ export function FontCard({ font, previewText }: FontCardProps) {
         {font.isSourceHanDerivative ? (
           <Badge tone="source-han">思源系</Badge>
         ) : null}
+        {font.isHeritageGlyph ? (
+          <Badge tone="heritage">傳承字形</Badge>
+        ) : null}
         {font.languages.map((language) => (
           <Badge tone="language" key={language.languageCode}>
             {language.languageCode}

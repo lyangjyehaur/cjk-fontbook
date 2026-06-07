@@ -48,6 +48,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
   const [category, setCategory] = useState<Category | "all">("all");
   const [license, setLicense] = useState<LicenseFilter | "all">("all");
   const [sourceHan, setSourceHan] = useState<"all" | "yes" | "no">("all");
+  const [heritageGlyph, setHeritageGlyph] = useState<"all" | "yes" | "no">("all");
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
 
   const filteredFonts = useMemo(() => {
@@ -70,12 +71,21 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
         sourceHan === "all" ||
         (sourceHan === "yes" && font.isSourceHanDerivative) ||
         (sourceHan === "no" && !font.isSourceHanDerivative);
+      const matchesHeritageGlyph =
+        heritageGlyph === "all" ||
+        (heritageGlyph === "yes" && font.isHeritageGlyph) ||
+        (heritageGlyph === "no" && !font.isHeritageGlyph);
 
       return (
-        matchesQuery && matchesLanguage && matchesCategory && matchesLicense && matchesSourceHan
+        matchesQuery &&
+        matchesLanguage &&
+        matchesCategory &&
+        matchesLicense &&
+        matchesSourceHan &&
+        matchesHeritageGlyph
       );
     });
-  }, [category, fonts, language, license, query, sourceHan]);
+  }, [category, fonts, heritageGlyph, language, license, query, sourceHan]);
 
   function toggleExpand(slug: string) {
     setExpandedSlug((prev) => (prev === slug ? null : slug));
@@ -112,7 +122,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           </span>
         </label>
         <FilterSelect
-          label="語言"
+          label="地區"
           value={language}
           options={LANGUAGE_CODES}
           onChange={(value) => setLanguage(value as LanguageCode | "all")}
@@ -134,6 +144,12 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           value={sourceHan}
           options={["yes", "no"]}
           onChange={(value) => setSourceHan(value as "all" | "yes" | "no")}
+        />
+        <FilterSelect
+          label="傳承字形"
+          value={heritageGlyph}
+          options={["yes", "no"]}
+          onChange={(value) => setHeritageGlyph(value as "all" | "yes" | "no")}
         />
       </div>
 
@@ -157,7 +173,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           <span>名稱</span>
           <span>分類</span>
           <span>授權</span>
-          <span>語言</span>
+          <span>地區</span>
           <span>思源系</span>
           <span />
         </div>

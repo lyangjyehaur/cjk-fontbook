@@ -21,6 +21,7 @@ export const fonts = pgTable("fonts", {
   category: text("category"),
   isVariable: boolean("is_variable").default(false),
   isSourceHanDerivative: boolean("is_source_han_derivative").default(false),
+  isHeritageGlyph: boolean("is_heritage_glyph").default(false),
   cssFontFamily: text("css_font_family"),
   previewCssUrl: text("preview_css_url"),
   notes: text("notes"),

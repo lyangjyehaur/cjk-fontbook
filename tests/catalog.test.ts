@@ -15,6 +15,12 @@ describe("catalog queries", () => {
     expect(fonts.every((font) => font.languages.length > 0)).toBe(true);
   });
 
+  it("marks current seed fonts as non-heritage glyph fonts", async () => {
+    const fonts = await getAllFonts();
+
+    expect(fonts.every((font) => font.isHeritageGlyph === false)).toBe(true);
+  });
+
   it("finds a font by slug with languages and tags", async () => {
     const font = await getFontBySlug("noto-sans-cjk");
 

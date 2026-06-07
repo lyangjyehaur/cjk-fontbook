@@ -23,6 +23,9 @@ describe("Traditional Chinese UI copy", () => {
 
     expect(source).toContain("自訂預覽文字");
     expect(source).toContain("搜尋字體");
+    expect(source).toContain('label="地區"');
+    expect(source).toContain("<span>地區</span>");
+    expect(source).toContain("傳承字形");
     expect(source).toContain("字體目錄");
     expect(source).toContain("顯示 {filteredFonts.length} / {fonts.length} 個字體");
     expect(source).toContain("字體詳情");
@@ -53,5 +56,12 @@ describe("Traditional Chinese UI copy", () => {
     for (const label of removedLabels) {
       expect(source).not.toContain(label);
     }
+  });
+
+  it("does not show region filters as language labels", () => {
+    const filterPanel = readFileSync("src/components/FontFilterPanel.tsx", "utf8");
+
+    expect(filterPanel).not.toContain('label="語言"');
+    expect(filterPanel).not.toContain("<span>語言</span>");
   });
 });
