@@ -32,6 +32,9 @@ export function FontCard({ font, previewText }: FontCardProps) {
       <div className="flex flex-wrap gap-2">
         <Badge tone="category">{font.category}</Badge>
         <Badge tone="license">{font.license}</Badge>
+        {font.isSourceHanDerivative ? (
+          <Badge tone="source-han">思源系</Badge>
+        ) : null}
         {font.languages.map((language) => (
           <Badge tone="language" key={language.languageCode}>
             {language.languageCode}

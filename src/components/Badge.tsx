@@ -5,6 +5,7 @@ type BadgeTone =
   | "category"
   | "license"
   | "coverage"
+  | "source-han"
   | "neutral";
 
 interface BadgeProps {
@@ -21,6 +22,8 @@ const toneClass: Record<BadgeTone, string> = {
     "border-ink-200 bg-ink-100 text-ink-700 dark:border-white/15 dark:bg-white/10 dark:text-ink-100",
   coverage:
     "border-sky-300/50 bg-sky-100 text-sky-800 dark:border-sky-300/30 dark:bg-sky-300/10 dark:text-sky-100",
+  "source-han":
+    "border-purple-300/50 bg-purple-100 text-purple-800 dark:border-purple-300/30 dark:bg-purple-300/10 dark:text-purple-200",
   neutral:
     "border-ink-200 bg-white/70 text-ink-700 dark:border-white/10 dark:bg-white/5 dark:text-ink-100",
 };

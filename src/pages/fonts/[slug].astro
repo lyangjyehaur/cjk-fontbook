@@ -66,6 +66,9 @@ const links = [
     <section class="mt-8 flex flex-wrap gap-2" aria-label="Font metadata">
       <Badge tone="category">{font.category}</Badge>
       <Badge tone="license">{font.license}</Badge>
+      {font.isSourceHanDerivative ? (
+        <Badge tone="source-han">思源系</Badge>
+      ) : null}
       {font.languages.map((language) => (
         <Badge tone="language">{language.languageCode} {language.coverageLevel}</Badge>
       ))}

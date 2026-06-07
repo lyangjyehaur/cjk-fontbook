@@ -30,6 +30,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
   const [language, setLanguage] = useState<LanguageCode | "all">("all");
   const [category, setCategory] = useState<Category | "all">("all");
   const [license, setLicense] = useState<LicenseFilter | "all">("all");
+  const [sourceHan, setSourceHan] = useState<"all" | "yes" | "no">("all");
 
   const filteredFonts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -47,12 +48,16 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
         category === "all" || font.category === category;
       const matchesLicense =
         license === "all" || licenseMatches(font.license, license);
+      const matchesSourceHan =
+        sourceHan === "all" ||
+        (sourceHan === "yes" && font.isSourceHanDerivative) ||
+        (sourceHan === "no" && !font.isSourceHanDerivative);
 
       return (
-        matchesQuery && matchesLanguage && matchesCategory && matchesLicense
+        matchesQuery && matchesLanguage && matchesCategory && matchesLicense && matchesSourceHan
       );
     });
-  }, [category, fonts, language, license, query]);
+  }, [category, fonts, language, license, query, sourceHan]);
 
   return (
     <section className="space-y-8" aria-labelledby="catalog-heading">
@@ -101,6 +106,12 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           value={license}
           options={LICENSE_FILTERS}
           onChange={(value) => setLicense(value as LicenseFilter | "all")}
+        />
+        <FilterSelect
+          label="Source Han Derivative"
+          value={sourceHan}
+          options={["yes", "no"]}
+          onChange={(value) => setSourceHan(value as "all" | "yes" | "no")}
         />
       </div>
 

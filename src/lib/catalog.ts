@@ -1,4 +1,4 @@
-export const LANGUAGE_CODES = ["SC", "TC", "JP", "KR"] as const;
+export const LANGUAGE_CODES = ["SC", "TC-TW", "TC-HK", "JP", "KR"] as const;
 export const CATEGORIES = [
   "sans",
   "serif",
@@ -33,6 +33,7 @@ export interface FontRecord {
   author?: string;
   category: Category;
   isVariable: boolean;
+  isSourceHanDerivative: boolean;
   cssFontFamily?: string;
   previewCssUrl?: string;
   notes?: string;
@@ -42,7 +43,8 @@ export interface FontRecord {
 
 const panCjkLanguages: FontLanguage[] = [
   { languageCode: "SC", coverageLevel: "full" },
-  { languageCode: "TC", coverageLevel: "full" },
+  { languageCode: "TC-TW", coverageLevel: "full" },
+  { languageCode: "TC-HK", coverageLevel: "full" },
   { languageCode: "JP", coverageLevel: "full" },
   { languageCode: "KR", coverageLevel: "full" },
 ];
@@ -62,6 +64,7 @@ export const catalogFonts: FontRecord[] = [
     author: "Google",
     category: "sans",
     isVariable: false,
+    isSourceHanDerivative: false,
     cssFontFamily: "'Noto Sans SC', 'Noto Sans CJK SC', sans-serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap",
@@ -84,6 +87,7 @@ export const catalogFonts: FontRecord[] = [
     author: "Google",
     category: "serif",
     isVariable: false,
+    isSourceHanDerivative: false,
     cssFontFamily: "'Noto Serif SC', 'Noto Serif CJK SC', serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap",
@@ -98,7 +102,7 @@ export const catalogFonts: FontRecord[] = [
     name: "Source Han Sans",
     displayName: "思源黑體 / 源ノ角ゴシック",
     description:
-      "Adobe and Google’s open-source pan-CJK sans serif family, distributed as Source Han Sans and Noto Sans CJK.",
+      "Adobe and Google's open-source pan-CJK sans serif family, distributed as Source Han Sans and Noto Sans CJK.",
     license: "OFL-1.1",
     sourceUrl: "https://github.com/adobe-fonts/source-han-sans",
     repoUrl: "https://github.com/adobe-fonts/source-han-sans",
@@ -106,6 +110,7 @@ export const catalogFonts: FontRecord[] = [
     author: "Adobe + Google",
     category: "sans",
     isVariable: false,
+    isSourceHanDerivative: false,
     cssFontFamily: "'Source Han Sans', 'Noto Sans CJK SC', sans-serif",
     notes:
       "Same glyph project as Noto Sans CJK with different packaging and naming. No web preview CSS is bundled by this catalog.",
@@ -118,7 +123,7 @@ export const catalogFonts: FontRecord[] = [
     name: "Source Han Serif",
     displayName: "思源宋體 / 源ノ明朝",
     description:
-      "Adobe and Google’s open-source pan-CJK serif family for editorial and long-form CJK typography.",
+      "Adobe and Google's open-source pan-CJK serif family for editorial and long-form CJK typography.",
     license: "OFL-1.1",
     sourceUrl: "https://source.typekit.com/source-han-serif/",
     repoUrl: "https://github.com/adobe-fonts/source-han-serif",
@@ -126,6 +131,7 @@ export const catalogFonts: FontRecord[] = [
     author: "Adobe + Google",
     category: "serif",
     isVariable: false,
+    isSourceHanDerivative: false,
     cssFontFamily: "'Source Han Serif', 'Noto Serif CJK SC', serif",
     notes:
       "Same glyph project as Noto Serif CJK with different packaging and naming. No web preview CSS is bundled by this catalog.",
@@ -145,6 +151,7 @@ export const catalogFonts: FontRecord[] = [
     author: "be5invis",
     category: "mono",
     isVariable: false,
+    isSourceHanDerivative: true,
     cssFontFamily: "'Sarasa Gothic', 'Sarasa Mono SC', monospace",
     notes:
       "The project ships many regional and width variants. Choose the package that matches your script and code style needs.",
@@ -164,13 +171,14 @@ export const catalogFonts: FontRecord[] = [
     author: "LXGW",
     category: "handwriting",
     isVariable: false,
+    isSourceHanDerivative: false,
     cssFontFamily: "'LXGW WenKai TC', 'LXGW WenKai', cursive",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap",
     notes:
       "Traditional Chinese preview is available through Google Fonts. Simplified Chinese support is partial in this MVP catalog entry.",
     languages: [
-      { languageCode: "TC", coverageLevel: "full" },
+      { languageCode: "TC-TW", coverageLevel: "full" },
       { languageCode: "SC", coverageLevel: "partial" },
     ],
     tags: ["kaiti", "handwriting", "reading"],
@@ -188,6 +196,7 @@ export const catalogFonts: FontRecord[] = [
     author: "Coji Morishita",
     category: "sans",
     isVariable: false,
+    isSourceHanDerivative: false,
     cssFontFamily: "'M PLUS 1p', sans-serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700&display=swap",
@@ -207,6 +216,7 @@ export const catalogFonts: FontRecord[] = [
     author: "Google",
     category: "sans",
     isVariable: false,
+    isSourceHanDerivative: false,
     cssFontFamily: "'Zen Kaku Gothic New', sans-serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700&display=swap",
@@ -226,6 +236,7 @@ export const catalogFonts: FontRecord[] = [
     author: "Google",
     category: "rounded",
     isVariable: false,
+    isSourceHanDerivative: false,
     cssFontFamily: "'Zen Maru Gothic', sans-serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap",
@@ -245,6 +256,7 @@ export const catalogFonts: FontRecord[] = [
     author: "Google",
     category: "serif",
     isVariable: false,
+    isSourceHanDerivative: false,
     cssFontFamily: "'Shippori Mincho', serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap",
@@ -265,6 +277,7 @@ export const catalogFonts: FontRecord[] = [
     author: "orioncactus",
     category: "sans",
     isVariable: true,
+    isSourceHanDerivative: true,
     cssFontFamily: "'Pretendard', sans-serif",
     notes:
       "No external preview CSS is loaded by this MVP. Install or self-host Pretendard for production usage.",
@@ -277,13 +290,14 @@ export const catalogFonts: FontRecord[] = [
     name: "D2Coding",
     displayName: "D2Coding",
     description:
-      "Naver’s Korean monospaced coding font, designed for Hangul readability in development tools.",
+      "Naver's Korean monospaced coding font, designed for Hangul readability in development tools.",
     license: "OFL-1.1",
     sourceUrl: "https://github.com/naver/d2codingfont",
     repoUrl: "https://github.com/naver/d2codingfont",
     author: "Naver",
     category: "mono",
     isVariable: false,
+    isSourceHanDerivative: false,
     cssFontFamily: "'D2 Coding', monospace",
     notes:
       "Google Fonts availability can vary; this MVP leaves remote preview CSS disabled unless a verified CSS endpoint is added.",
