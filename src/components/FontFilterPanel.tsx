@@ -16,6 +16,8 @@ interface FontFilterPanelProps {
   fonts: FontRecord[];
 }
 
+const PAGE_SIZE = 20;
+
 const optionLabels: Record<string, string> = {
   all: "全部",
   yes: "是",
@@ -47,6 +49,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
   const [license, setLicense] = useState<LicenseFilter | "all">("all");
   const [sourceHan, setSourceHan] = useState<"all" | "yes" | "no">("all");
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredFonts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -82,7 +85,17 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
     });
   }, [category, fonts, license, query, selectedGlyphs, sourceHan]);
 
+  const totalPages = Math.max(1, Math.ceil(filteredFonts.length / PAGE_SIZE));
+  const pageStart = (currentPage - 1) * PAGE_SIZE;
+  const pagedFonts = filteredFonts.slice(pageStart, pageStart + PAGE_SIZE);
+  const pagedFontSlugs = new Set(pagedFonts.map((font) => font.slug));
+
+  function resetPage() {
+    setCurrentPage(1);
+  }
+
   function toggleGlyph(glyph: LanguageCode) {
+    resetPage();
     setSelectedGlyphs((current) =>
       current.includes(glyph)
         ? current.filter((selectedGlyph) => selectedGlyph !== glyph)
@@ -110,9 +123,10 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
                   className="input input-bordered w-full pl-10"
                   placeholder="Noto, WenKai, Gothic..."
                   value={query}
-                  onInput={(event) =>
-                    setQuery((event.currentTarget as HTMLInputElement).value)
-                  }
+                  onInput={(event) => {
+                    resetPage();
+                    setQuery((event.currentTarget as HTMLInputElement).value);
+                  }}
                 />
               </span>
             </label>
@@ -139,26 +153,38 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
               selectedGlyphs={selectedGlyphs}
               options={LANGUAGE_CODES}
               optionLabels={GLYPH_LABELS}
-              onClear={() => setSelectedGlyphs([])}
+              onClear={() => {
+                resetPage();
+                setSelectedGlyphs([]);
+              }}
               onToggle={toggleGlyph}
             />
             <FilterSelect
               label="分類"
               value={category}
               options={CATEGORIES}
-              onChange={(value) => setCategory(value as Category | "all")}
+              onChange={(value) => {
+                resetPage();
+                setCategory(value as Category | "all");
+              }}
             />
             <FilterSelect
               label="授權"
               value={license}
               options={LICENSE_FILTERS}
-              onChange={(value) => setLicense(value as LicenseFilter | "all")}
+              onChange={(value) => {
+                resetPage();
+                setLicense(value as LicenseFilter | "all");
+              }}
             />
             <FilterSelect
               label="思源系"
               value={sourceHan}
               options={["yes", "no"]}
-              onChange={(value) => setSourceHan(value as "all" | "yes" | "no")}
+              onChange={(value) => {
+                resetPage();
+                setSourceHan(value as "all" | "yes" | "no");
+              }}
             />
           </div>
 
@@ -170,7 +196,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
                 字體目錄
               </h2>
               <p className="mt-1 text-sm text-base-content/65">
-                顯示 {filteredFonts.length} / {fonts.length} 個字體
+                顯示 {pagedFonts.length} / {filteredFonts.length} 個字體
               </p>
             </div>
             <div className="stats stats-horizontal border border-base-300 bg-base-100 shadow-none">
@@ -197,11 +223,12 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           <tbody>
             {filteredFonts.map((font) => {
               const isExpanded = expandedSlug === font.slug;
+              const isCurrentPageFont = pagedFontSlugs.has(font.slug);
 
               return (
                 <Fragment key={font.slug}>
                   <tr
-                    className="cursor-pointer transition hover:bg-base-200"
+                    className={`cursor-pointer transition hover:bg-base-200 ${isCurrentPageFont ? "" : "hidden"}`}
                     onClick={() => toggleExpand(font.slug)}
                     aria-expanded={isExpanded}
                   >
@@ -267,7 +294,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
                     </td>
                   </tr>
                   {isExpanded ? (
-                    <tr>
+                    <tr className={isCurrentPageFont ? "" : "hidden"}>
                       <td colSpan={5} className="bg-base-100 p-4">
                         <FontPreview
                           compact
@@ -292,6 +319,30 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
             ) : null}
           </tbody>
         </table>
+      </div>
+
+      <div className="flex justify-center">
+        <div className="join">
+          <button
+            type="button"
+            className="join-item btn btn-sm"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(currentPage - 1)}
+          >
+            «
+          </button>
+          <button type="button" className="join-item btn btn-sm">
+            第 {currentPage} 頁，共 {totalPages} 頁
+          </button>
+          <button
+            type="button"
+            className="join-item btn btn-sm"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(currentPage + 1)}
+          >
+            »
+          </button>
+        </div>
       </div>
     </section>
   );
@@ -336,6 +387,7 @@ function FilterChips({
                 type="checkbox"
                 className="sr-only"
                 checked={checked}
+                aria-label={optionLabels[option] ?? option}
                 onChange={() => onToggle(option)}
               />
               {optionLabels[option] ?? option}
@@ -344,11 +396,11 @@ function FilterChips({
         })}
         {selectedGlyphs.length > 0 && (
           <button
-            type="button"
+            type="reset"
             className="btn btn-sm btn-ghost"
             onClick={onClear}
           >
-            × 清除
+            × 清除篩選
           </button>
         )}
       </div>

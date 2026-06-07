@@ -29,7 +29,7 @@ describe("Traditional Chinese UI copy", () => {
     expect(source).toContain("傳承字形");
     expect(source).toContain("思源系");
     expect(source).toContain("字體目錄");
-    expect(source).toContain("顯示 {filteredFonts.length} / {fonts.length} 個字體");
+    expect(source).toContain("顯示 {pagedFonts.length} / {filteredFonts.length} 個字體");
     expect(source).toContain("字體詳情");
     expect(source).toContain("比較字體");
     expect(source).toContain("授權條款");
