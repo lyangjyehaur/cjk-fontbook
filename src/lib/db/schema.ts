@@ -14,6 +14,8 @@ export const fonts = pgTable("fonts", {
   displayName: text("display_name"),
   description: text("description"),
   license: text("license"),
+  baseFont: text("base_font"),
+  status: text("status").default("active"),
   sourceUrl: text("source_url"),
   repoUrl: text("repo_url"),
   homepageUrl: text("homepage_url"),

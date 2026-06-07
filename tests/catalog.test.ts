@@ -12,12 +12,31 @@ import {
 } from "../src/lib/db/queries";
 
 describe("catalog queries", () => {
-  it("returns the 12 seeded MVP fonts", async () => {
+  it("returns the seeded catalog fonts", async () => {
     const fonts = await getAllFonts();
 
-    expect(fonts).toHaveLength(12);
+    expect(fonts).toHaveLength(40);
     expect(fonts.map((font) => font.slug)).toContain("lxgw-wenkai");
     expect(fonts.every((font) => font.languages.length > 0)).toBe(true);
+  });
+
+  it("tracks LXGW base fonts and project status", async () => {
+    const wenkai = await getFontBySlug("lxgw-wenkai");
+    const clearGothic = await getFontBySlug("lxgw-clear-gothic");
+    const bright = await getFontBySlug("lxgw-bright");
+
+    expect(wenkai).toMatchObject({
+      baseFont: "Klee One",
+      status: "active",
+    });
+    expect(clearGothic).toMatchObject({
+      baseFont: "IPA exゴシック",
+      status: "archived",
+    });
+    expect(bright).toMatchObject({
+      baseFont: "Ysabeau Office + 霞鶩文楷系列",
+      status: "active",
+    });
   });
 
   it("defines special regions as language codes with localized labels", () => {
@@ -70,6 +89,7 @@ describe("catalog queries", () => {
     ).toEqual([
       "pretendard",
       "sarasa-gothic",
+      "source-han-rounded",
     ]);
     expect(
       fonts.some((font) =>
@@ -83,8 +103,13 @@ describe("catalog queries", () => {
   it("groups fonts by license", async () => {
     const groups = await getLicenseGroups();
 
-    expect(groups).toHaveLength(1);
-    expect(groups[0]?.license).toBe("OFL-1.1");
-    expect(groups[0]?.fonts).toHaveLength(12);
+    expect(groups.map((group) => group.license)).toEqual([
+      "GPL-2.0",
+      "IPA-1.0",
+      "OFL-1.1",
+    ]);
+    expect(
+      groups.find((group) => group.license === "OFL-1.1")?.fonts,
+    ).toHaveLength(32);
   });
 });
