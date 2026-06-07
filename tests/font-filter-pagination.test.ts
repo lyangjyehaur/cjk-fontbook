@@ -12,7 +12,12 @@ describe("FontFilterPanel pagination", () => {
     expect(source).toContain("filteredFonts.map((font)");
     expect(source).toContain('isCurrentPageFont ? "" : "hidden"');
     expect(source).toContain("顯示 {pagedFonts.length} / {filteredFonts.length} 個字體");
-    expect(source).toContain("第 {currentPage} 頁，共 {totalPages} 頁");
     expect(source).toContain('className="join"');
+    expect(source).toContain("visiblePageItems.map((item, index)");
+    expect(source).toContain('className="join-item btn btn-sm btn-disabled"');
+    expect(source).toContain("btn-active");
+    expect(source).toContain('aria-label="上一頁"');
+    expect(source).toContain('aria-label="下一頁"');
+    expect(source).toContain("`前往第 ${item} 頁`");
   });
 });

@@ -86,6 +86,24 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
   }, [category, fonts, license, query, selectedGlyphs, sourceHan]);
 
   const totalPages = Math.max(1, Math.ceil(filteredFonts.length / PAGE_SIZE));
+  const visiblePageItems = useMemo<(number | "ellipsis")[]>(() => {
+    const pageNumbers = new Set(
+      [1, currentPage - 1, currentPage, currentPage + 1, totalPages].filter(
+        (page) => page >= 1 && page <= totalPages,
+      ),
+    );
+    const sortedPageNumbers = [...pageNumbers].sort((a, b) => a - b);
+
+    return sortedPageNumbers.flatMap((page, index) => {
+      const previousPage = sortedPageNumbers[index - 1];
+
+      if (previousPage !== undefined && page - previousPage > 1) {
+        return ["ellipsis", page];
+      }
+
+      return [page];
+    });
+  }, [currentPage, totalPages]);
   const pageStart = (currentPage - 1) * PAGE_SIZE;
   const pagedFonts = filteredFonts.slice(pageStart, pageStart + PAGE_SIZE);
   const pagedFontSlugs = new Set(pagedFonts.map((font) => font.slug));
@@ -326,17 +344,39 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           <button
             type="button"
             className="join-item btn btn-sm"
+            aria-label="上一頁"
             disabled={currentPage === 1}
             onClick={() => setCurrentPage(currentPage - 1)}
           >
             «
           </button>
-          <button type="button" className="join-item btn btn-sm">
-            第 {currentPage} 頁，共 {totalPages} 頁
-          </button>
+          {visiblePageItems.map((item, index) =>
+            item === "ellipsis" ? (
+              <button
+                key={`ellipsis-${index}`}
+                type="button"
+                className="join-item btn btn-sm btn-disabled"
+                disabled
+              >
+                ...
+              </button>
+            ) : (
+              <button
+                key={item}
+                type="button"
+                className={`join-item btn btn-sm ${item === currentPage ? "btn-active" : ""}`}
+                aria-current={item === currentPage ? "page" : undefined}
+                aria-label={`前往第 ${item} 頁`}
+                onClick={() => setCurrentPage(item)}
+              >
+                {item}
+              </button>
+            ),
+          )}
           <button
             type="button"
             className="join-item btn btn-sm"
+            aria-label="下一頁"
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage(currentPage + 1)}
           >
