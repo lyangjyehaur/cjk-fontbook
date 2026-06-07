@@ -19,3 +19,12 @@ body {
 ::selection {
   background: rgba(47, 117, 181, 0.25);
 }
+
+/* DaisyUI 5.x filter checkbox checked state override */
+input[type="checkbox"].btn:checked {
+  --btn-color: var(--color-primary);
+  --btn-fg: var(--color-primary-content);
+  background-color: var(--btn-color);
+  color: var(--btn-fg);
+  border-color: var(--btn-color);
+}
