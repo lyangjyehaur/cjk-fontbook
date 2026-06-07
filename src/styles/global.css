@@ -6,15 +6,6 @@
 
 :root {
   color-scheme: light dark;
-  background: #f8f7f4;
-  color: #171511;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    background: #171511;
-    color: #f8f7f4;
-  }
 }
 
 html {
@@ -23,19 +14,8 @@ html {
 
 body {
   min-height: 100vh;
-  background:
-    linear-gradient(180deg, rgba(185, 74, 53, 0.07), transparent 360px),
-    #f8f7f4;
-}
-
-@media (prefers-color-scheme: dark) {
-  body {
-    background:
-      linear-gradient(180deg, rgba(185, 74, 53, 0.14), transparent 360px),
-      #171511;
-  }
 }
 
 ::selection {
-  background: rgba(185, 74, 53, 0.25);
+  background: rgba(47, 117, 181, 0.25);
 }

@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-preact";
 import { useEffect, useId, useMemo, useState } from "preact/hooks";
 import type { FontRecord } from "../lib/catalog";
 import { defaultPreviewText } from "../lib/catalog";
@@ -8,6 +9,7 @@ interface FontPreviewProps {
   showControls?: boolean;
   compact?: boolean;
   loadOnMount?: boolean;
+  showDetailLink?: boolean;
 }
 
 const loadedCssUrls = new Set<string>();
@@ -31,6 +33,7 @@ export function FontPreview({
   showControls = true,
   compact = false,
   loadOnMount = true,
+  showDetailLink = true,
 }: FontPreviewProps) {
   const id = useId();
   const [text, setText] = useState(defaultText);
@@ -56,23 +59,30 @@ export function FontPreview({
   );
 
   return (
-    <section className="space-y-4">
-      {showControls ? (
-        <div className="card border border-base-300 bg-base-100/80 shadow-sm">
-          <div className="card-body grid gap-3 p-4 md:grid-cols-[1fr_auto_auto] md:items-end">
-            <label className="form-control grid gap-1 text-sm font-medium text-base-content/80">
+    <section
+      className={`card border border-base-300 bg-base-100 shadow-sm ${
+        compact ? "card-compact" : ""
+      }`}
+    >
+      <div className="card-body gap-4">
+        {showControls ? (
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_12rem_9rem] lg:items-end">
+            <label className="form-control grid gap-2 text-sm font-medium">
               預覽文字
               <textarea
-                className="textarea textarea-bordered min-h-11 resize-none text-base focus:border-vermilion"
-                rows={1}
-              value={text}
-              onInput={(event) =>
-                setText((event.currentTarget as HTMLTextAreaElement).value)
-              }
+                className="textarea textarea-bordered min-h-20 resize-y"
+                rows={compact ? 2 : 3}
+                value={text}
+                onInput={(event) =>
+                  setText((event.currentTarget as HTMLTextAreaElement).value)
+                }
               />
             </label>
-            <label className="form-control grid min-w-40 gap-1 text-sm font-medium text-base-content/80">
-              字級 {fontSize}px
+            <label className="form-control grid gap-2 text-sm font-medium">
+              <span className="flex items-center justify-between gap-3">
+                字級
+                <span className="badge badge-ghost badge-sm">{fontSize}px</span>
+              </span>
               <input
                 className="range range-primary range-sm"
                 type="range"
@@ -86,10 +96,10 @@ export function FontPreview({
                 }
               />
             </label>
-            <label className="form-control grid gap-1 text-sm font-medium text-base-content/80">
+            <label className="form-control grid gap-2 text-sm font-medium">
               字重
               <select
-                className="select select-bordered min-h-11 text-base focus:border-vermilion"
+                className="select select-bordered select-sm"
                 value={weight}
                 onChange={(event) =>
                   setWeight((event.currentTarget as HTMLSelectElement).value)
@@ -100,28 +110,37 @@ export function FontPreview({
               </select>
             </label>
           </div>
+        ) : null}
+
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          {!loadOnMount && font.previewCssUrl ? (
+            <button
+              className="btn btn-outline btn-sm"
+              type="button"
+              onClick={() => {
+                loadFontCss(font.previewCssUrl);
+                setLoaded(true);
+              }}
+              aria-describedby={id}
+            >
+              預覽
+            </button>
+          ) : (
+            <span />
+          )}
+
+          {showDetailLink ? (
+            <a className="btn btn-ghost btn-sm" href={`/fonts/${font.slug}/`}>
+              在詳情頁查看
+              <ExternalLink aria-hidden="true" className="h-4 w-4" />
+            </a>
+          ) : null}
         </div>
-      ) : null}
 
-      {!loadOnMount && font.previewCssUrl ? (
-        <button
-          className="btn btn-outline btn-sm border-ink-200 text-ink-900 hover:border-vermilion hover:bg-vermilion dark:border-white/10 dark:text-ink-50"
-          type="button"
-          onClick={() => {
-            loadFontCss(font.previewCssUrl);
-            setLoaded(true);
-          }}
-          aria-describedby={id}
+        <div
+          id={id}
+          className="min-h-36 rounded-box border border-base-300 bg-base-200 p-5"
         >
-          預覽
-        </button>
-      ) : null}
-
-      <div
-        id={id}
-        className="card min-h-32 overflow-hidden border border-base-300 bg-base-100 text-base-content shadow-sm"
-      >
-        <div className="card-body p-5">
           <p className="break-words transition" style={style}>
             {text}
           </p>

@@ -1,25 +1,22 @@
+import { Fragment } from "preact";
 import { ChevronDown, ChevronRight, Search } from "lucide-preact";
 import { useMemo, useState } from "preact/hooks";
 import type { Category, FontRecord, LanguageCode } from "../lib/catalog";
 import {
   CATEGORIES,
   defaultPreviewText,
+  GLYPH_LABELS,
   LANGUAGE_CODES,
   LICENSE_FILTERS,
-  GLYPH_LABELS,
   type LicenseFilter,
 } from "../lib/catalog";
-import { Badge } from "./Badge";
 import { FontPreview } from "./FontPreview";
 
 interface FontFilterPanelProps {
   fonts: FontRecord[];
 }
 
-const listGridClass =
-  "grid-cols-[minmax(14rem,1.35fr)_minmax(5.5rem,0.65fr)_minmax(6.5rem,0.7fr)_minmax(10rem,1fr)_2rem]";
-
-const defaultOptionLabels: Record<string, string> = {
+const optionLabels: Record<string, string> = {
   all: "全部",
   yes: "是",
   no: "否",
@@ -85,10 +82,6 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
     });
   }, [category, fonts, license, query, selectedGlyphs, sourceHan]);
 
-  function toggleExpand(slug: string) {
-    setExpandedSlug((prev) => (prev === slug ? null : slug));
-  }
-
   function toggleGlyph(glyph: LanguageCode) {
     setSelectedGlyphs((current) =>
       current.includes(glyph)
@@ -97,170 +90,208 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
     );
   }
 
+  function toggleExpand(slug: string) {
+    setExpandedSlug((current) => (current === slug ? null : slug));
+  }
+
   return (
-    <section className="space-y-8" aria-labelledby="catalog-heading">
-      <div className="card border border-base-300 bg-base-100/85 shadow-sm">
-        <div className="card-body grid gap-4 p-4 lg:grid-cols-[1fr_1fr]">
-          <label className="form-control grid gap-2 text-sm font-medium text-base-content/80">
-            自訂預覽文字
-            <input
-              className="input input-bordered min-h-12 text-base focus:border-vermilion"
-              value={previewText}
-              onInput={(event) =>
-                setPreviewText((event.currentTarget as HTMLInputElement).value)
-              }
-            />
-          </label>
-          <label className="form-control grid gap-2 text-sm font-medium text-base-content/80">
-            搜尋字體
-            <span className="relative">
-              <Search
-                aria-hidden="true"
-                className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-base-content/55"
-              />
+    <section className="space-y-6" aria-labelledby="catalog-heading">
+      <div className="card border border-base-300 bg-base-100 shadow-sm">
+        <div className="card-body gap-0 p-5 sm:p-6">
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            <label className="form-control grid gap-2 text-sm font-medium">
+              搜尋字體
+              <span className="relative">
+                <Search
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-base-content/45"
+                />
+                <input
+                  className="input input-bordered w-full pl-10"
+                  placeholder="Noto, WenKai, Gothic..."
+                  value={query}
+                  onInput={(event) =>
+                    setQuery((event.currentTarget as HTMLInputElement).value)
+                  }
+                />
+              </span>
+            </label>
+
+            <label className="form-control grid gap-2 text-sm font-medium">
+              自訂預覽文字
               <input
-                className="input input-bordered min-h-12 w-full pl-10 text-base focus:border-vermilion"
-                placeholder="Noto, WenKai, Gothic..."
-                value={query}
+                className="input input-bordered w-full"
+                value={previewText}
                 onInput={(event) =>
-                  setQuery((event.currentTarget as HTMLInputElement).value)
+                  setPreviewText(
+                    (event.currentTarget as HTMLInputElement).value,
+                  )
                 }
               />
-            </span>
-          </label>
-          <FilterChips
-            label="字形區別"
-            selectedGlyphs={selectedGlyphs}
-            options={LANGUAGE_CODES}
-            optionLabels={GLYPH_LABELS}
-            onClear={() => setSelectedGlyphs([])}
-            onToggle={toggleGlyph}
-          />
-          <FilterSelect
-            label="分類"
-            value={category}
-            options={CATEGORIES}
-            onChange={(value) => setCategory(value as Category | "all")}
-          />
-          <FilterSelect
-            label="授權"
-            value={license}
-            options={LICENSE_FILTERS}
-            onChange={(value) => setLicense(value as LicenseFilter | "all")}
-          />
-          <FilterSelect
-            label="思源系"
-            value={sourceHan}
-            options={["yes", "no"]}
-            onChange={(value) => setSourceHan(value as "all" | "yes" | "no")}
-          />
-        </div>
-      </div>
+            </label>
+          </div>
 
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h2
-            id="catalog-heading"
-            className="text-2xl font-semibold tracking-normal text-ink-900 dark:text-ink-50"
-          >
-            字體目錄
-          </h2>
-          <p className="mt-1 text-sm text-base-content/70">
-            顯示 {filteredFonts.length} / {fonts.length} 個字體
-            <span className="kbd kbd-sm ml-2 align-middle">
-              {filteredFonts.length}
-            </span>
-          </p>
+          <div className="divider my-5">篩選條件</div>
+
+          <div className="grid gap-5 xl:grid-cols-[minmax(18rem,1.5fr)_repeat(3,minmax(9rem,1fr))]">
+            <FilterChips
+              label="字形區別"
+              selectedGlyphs={selectedGlyphs}
+              options={LANGUAGE_CODES}
+              optionLabels={GLYPH_LABELS}
+              onClear={() => setSelectedGlyphs([])}
+              onToggle={toggleGlyph}
+            />
+            <FilterSelect
+              label="分類"
+              value={category}
+              options={CATEGORIES}
+              onChange={(value) => setCategory(value as Category | "all")}
+            />
+            <FilterSelect
+              label="授權"
+              value={license}
+              options={LICENSE_FILTERS}
+              onChange={(value) => setLicense(value as LicenseFilter | "all")}
+            />
+            <FilterSelect
+              label="思源系"
+              value={sourceHan}
+              options={["yes", "no"]}
+              onChange={(value) => setSourceHan(value as "all" | "yes" | "no")}
+            />
+          </div>
+
+          <div className="divider my-5"></div>
+
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 id="catalog-heading" className="text-2xl font-semibold">
+                字體目錄
+              </h2>
+              <p className="mt-1 text-sm text-base-content/65">
+                顯示 {filteredFonts.length} / {fonts.length} 個字體
+              </p>
+            </div>
+            <div className="stats stats-horizontal border border-base-300 bg-base-100 shadow-none">
+              <div className="stat px-4 py-2">
+                <div className="stat-title text-xs">目前結果</div>
+                <div className="stat-value text-2xl">{filteredFonts.length}</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100 shadow-sm">
-        {/* Header row */}
-        <div className={`grid min-w-[760px] ${listGridClass} gap-3 bg-base-200 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-base-content/70`}>
-          <span>名稱</span>
-          <span>分類</span>
-          <span>授權</span>
-          <span>字形區別</span>
-          <span />
-        </div>
+        <table className="table table-zebra table-pin-rows min-w-[860px]">
+          <thead>
+            <tr>
+              <th>名稱</th>
+              <th>分類</th>
+              <th>授權</th>
+              <th><span>字形區別</span></th>
+              <th>思源系</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredFonts.map((font) => {
+              const isExpanded = expandedSlug === font.slug;
 
-        {filteredFonts.map((font) => {
-          const isExpanded = expandedSlug === font.slug;
-          return (
-            <div
-              key={font.slug}
-              className={`border-t border-base-300 ${
-                isExpanded
-                  ? "bg-base-100"
-                  : "bg-base-100/70 hover:bg-base-200/70"
-              }`}
-            >
-              {/* Row */}
-              <button
-                className={`grid min-w-[760px] w-full ${listGridClass} items-center gap-3 px-4 py-3 text-left transition`}
-                onClick={() => toggleExpand(font.slug)}
-                aria-expanded={isExpanded}
-              >
-                <div className="min-w-0">
-                  <a
-                    className="text-base font-semibold text-ink-900 hover:text-vermilion dark:text-ink-50"
-                    href={`/fonts/${font.slug}/`}
-                    onClick={(e) => e.stopPropagation()}
+              return (
+                <Fragment key={font.slug}>
+                  <tr
+                    className="cursor-pointer transition hover:bg-base-200"
+                    onClick={() => toggleExpand(font.slug)}
+                    aria-expanded={isExpanded}
                   >
-                    {font.name}
-                  </a>
-                  {font.displayName && font.displayName !== font.name ? (
-                    <p className="mt-0.5 truncate text-sm text-base-content/70">
-                      {font.displayName}
-                    </p>
-                  ) : null}
-                </div>
-                <span className="min-w-0">
-                  <Badge tone="category">{defaultOptionLabels[font.category] ?? font.category}</Badge>
-                </span>
-                <span className="min-w-0">
-                  <Badge tone="license">{font.license}</Badge>
-                </span>
-                <span className="flex min-w-0 flex-wrap gap-1">
-                  {font.languages.map((lang) => (
-                    <Badge tone="language" key={lang.languageCode}>
-                      {GLYPH_LABELS[lang.languageCode]}
-                    </Badge>
-                  ))}
-                  {font.isSourceHanDerivative ? (
-                    <Badge tone="language">思源系</Badge>
-                  ) : null}
-                </span>
-                <span className="flex justify-center">
+                    <td>
+                      <div className="flex items-center gap-3">
+                        {isExpanded ? (
+                          <ChevronDown
+                            aria-hidden="true"
+                            className="h-4 w-4 shrink-0 text-base-content/50"
+                          />
+                        ) : (
+                          <ChevronRight
+                            aria-hidden="true"
+                            className="h-4 w-4 shrink-0 text-base-content/50"
+                          />
+                        )}
+                        <div className="min-w-0">
+                          <a
+                            className="font-semibold hover:text-primary"
+                            href={`/fonts/${font.slug}/`}
+                            onClick={(event) => event.stopPropagation()}
+                          >
+                            {font.name}
+                          </a>
+                          {font.displayName && font.displayName !== font.name ? (
+                            <p className="mt-0.5 max-w-xs truncate text-sm text-base-content/60">
+                              {font.displayName}
+                            </p>
+                          ) : null}
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span className="badge badge-primary badge-outline">
+                        {optionLabels[font.category] ?? font.category}
+                      </span>
+                    </td>
+                    <td>
+                      <span className="badge badge-ghost badge-sm">
+                        {font.license}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="flex flex-wrap gap-1.5">
+                        {font.languages.map((lang) => (
+                          <span
+                            className="badge badge-sm badge-outline"
+                            key={lang.languageCode}
+                          >
+                            {GLYPH_LABELS[lang.languageCode]}
+                          </span>
+                        ))}
+                      </div>
+                    </td>
+                    <td>
+                      {font.isSourceHanDerivative ? (
+                        <span className="badge badge-accent badge-sm">
+                          思源系
+                        </span>
+                      ) : (
+                        <span className="text-base-content/35">-</span>
+                      )}
+                    </td>
+                  </tr>
                   {isExpanded ? (
-                    <ChevronDown className="h-4 w-4 text-base-content/60" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4 text-base-content/60" />
-                  )}
-                </span>
-              </button>
+                    <tr>
+                      <td colSpan={5} className="bg-base-100 p-4">
+                        <FontPreview
+                          compact
+                          defaultText={previewText}
+                          font={font}
+                          loadOnMount={true}
+                          showControls={true}
+                        />
+                      </td>
+                    </tr>
+                  ) : null}
+                </Fragment>
+              );
+            })}
 
-              {/* Expanded preview */}
-              {isExpanded ? (
-                <div className="border-t border-base-300 px-4 py-5">
-                  <FontPreview
-                    compact
-                    defaultText={previewText}
-                    font={font}
-                    loadOnMount={true}
-                    showControls={true}
-                  />
-                </div>
-              ) : null}
-            </div>
-          );
-        })}
-
-        {filteredFonts.length === 0 ? (
-          <p className="px-4 py-8 text-center text-base-content/70">
-            沒有符合條件的字體。
-          </p>
-        ) : null}
+            {filteredFonts.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="py-10 text-center text-base-content/60">
+                  沒有符合條件的字體。
+                </td>
+              </tr>
+            ) : null}
+          </tbody>
+        </table>
       </div>
     </section>
   );
@@ -270,7 +301,6 @@ interface FilterSelectProps {
   label: string;
   value: string;
   options: readonly string[];
-  optionLabels?: Record<string, string>;
   onChange: (value: string) => void;
 }
 
@@ -292,15 +322,13 @@ function FilterChips({
   onToggle,
 }: FilterChipsProps) {
   return (
-    <fieldset className="form-control grid gap-2 text-sm font-medium text-base-content/80">
+    <fieldset className="form-control grid gap-2 text-sm font-medium">
       <legend>{label}</legend>
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
-          className={`btn btn-sm rounded-full ${
-            selectedGlyphs.length === 0
-              ? "btn-active bg-vermilion text-white hover:bg-vermilion"
-              : "btn-outline border-base-300 hover:border-vermilion hover:bg-vermilion"
+          className={`btn btn-sm btn-outline ${
+            selectedGlyphs.length === 0 ? "btn-active btn-primary" : ""
           }`}
           aria-pressed={selectedGlyphs.length === 0}
           onClick={onClear}
@@ -314,10 +342,8 @@ function FilterChips({
             <button
               type="button"
               key={option}
-              className={`btn btn-sm rounded-full ${
-                selected
-                  ? "btn-active bg-vermilion text-white hover:bg-vermilion"
-                  : "btn-outline border-base-300 hover:border-vermilion hover:bg-vermilion"
+              className={`btn btn-sm btn-outline ${
+                selected ? "btn-active btn-primary" : ""
               }`}
               aria-pressed={selectedGlyphs.includes(option)}
               onClick={() => onToggle(option)}
@@ -331,18 +357,12 @@ function FilterChips({
   );
 }
 
-function FilterSelect({
-  label,
-  value,
-  options,
-  optionLabels = defaultOptionLabels,
-  onChange,
-}: FilterSelectProps) {
+function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
   return (
-    <label className="form-control grid gap-2 text-sm font-medium text-base-content/80">
+    <label className="form-control grid gap-2 text-sm font-medium">
       {label}
       <select
-        className="select select-bordered min-h-12 text-base focus:border-vermilion"
+        className="select select-bordered select-sm"
         value={value}
         onChange={(event) =>
           onChange((event.currentTarget as HTMLSelectElement).value)

@@ -20,12 +20,18 @@ describe("DaisyUI integration", () => {
       "src/components/Badge.tsx",
       "src/components/Header.astro",
       "src/components/Footer.astro",
+      "src/pages/index.astro",
+      "src/pages/fonts/[slug].astro",
+      "src/pages/compare.astro",
+      "src/pages/licenses.astro",
     ]
       .map(read)
       .join("\n");
 
     for (const className of [
+      "hero",
       "card",
+      "divider",
       "btn",
       "btn-sm",
       "btn-outline",
@@ -35,6 +41,11 @@ describe("DaisyUI integration", () => {
       "textarea",
       "range",
       "badge",
+      "stats",
+      "table",
+      "table-zebra",
+      "mockup-code",
+      "collapse",
       "navbar",
       "footer",
     ]) {
