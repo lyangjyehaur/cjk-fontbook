@@ -324,28 +324,34 @@ function FilterChips({
   return (
     <fieldset className="form-control grid gap-2 text-sm font-medium">
       <legend>{label}</legend>
-      <form
-        className="flex flex-wrap items-center gap-2"
-        onSubmit={(event) => event.preventDefault()}
-      >
-        {options.map((option) => (
-          <input
-            key={option}
-            type="checkbox"
-            className="btn btn-sm"
-            aria-label={optionLabels[option] ?? option}
-            checked={selectedGlyphs.includes(option)}
-            onChange={() => onToggle(option)}
-          />
-        ))}
-        <button
-          type="reset"
-          className="btn btn-sm btn-ghost"
-          onClick={onClear}
-        >
-          ×<span className="sr-only">清除篩選</span>
-        </button>
-      </form>
+      <div className="flex flex-wrap items-center gap-2">
+        {options.map((option) => {
+          const checked = selectedGlyphs.includes(option);
+          return (
+            <label
+              key={option}
+              className={`btn btn-sm cursor-pointer ${checked ? "btn-active" : "btn-outline"}`}
+            >
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={checked}
+                onChange={() => onToggle(option)}
+              />
+              {optionLabels[option] ?? option}
+            </label>
+          );
+        })}
+        {selectedGlyphs.length > 0 && (
+          <button
+            type="button"
+            className="btn btn-sm btn-ghost"
+            onClick={onClear}
+          >
+            × 清除
+          </button>
+        )}
+      </div>
     </fieldset>
   );
 }

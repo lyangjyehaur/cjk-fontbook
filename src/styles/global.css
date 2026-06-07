@@ -28,3 +28,10 @@ input[type="checkbox"].btn:checked {
   color: var(--btn-fg);
   border-color: var(--btn-color);
 }
+
+/* Force ::after pseudo-element on checkbox inputs to display aria-label */
+input[type="checkbox"].btn[aria-label]::after {
+  content: attr(aria-label) !important;
+  display: inline-block;
+  white-space: nowrap;
+}
