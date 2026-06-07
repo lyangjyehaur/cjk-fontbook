@@ -364,7 +364,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
               <button
                 key={item}
                 type="button"
-                className={`join-item btn btn-sm ${item === currentPage ? "btn-active" : ""}`}
+                className={`join-item btn btn-sm ${item === currentPage ? "btn-primary" : "btn-ghost"}`}
                 aria-current={item === currentPage ? "page" : undefined}
                 aria-label={`前往第 ${item} 頁`}
                 onClick={() => setCurrentPage(item)}
