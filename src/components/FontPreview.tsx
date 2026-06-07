@@ -60,7 +60,7 @@ export function FontPreview({
       {showControls ? (
         <div className="grid gap-3 rounded-lg border border-ink-200 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5 md:grid-cols-[1fr_auto_auto] md:items-end">
           <label className="grid gap-1 text-sm font-medium text-ink-700 dark:text-ink-100">
-            Preview text
+            預覽文字
             <input
               className="min-h-11 rounded-md border border-ink-200 bg-white px-3 text-base text-ink-900 outline-none transition focus:border-vermilion dark:border-white/10 dark:bg-ink-900 dark:text-ink-50"
               value={text}
@@ -70,7 +70,7 @@ export function FontPreview({
             />
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-medium text-ink-700 dark:text-ink-100">
-            Size {fontSize}px
+            字級 {fontSize}px
             <input
               type="range"
               min="24"
@@ -82,7 +82,7 @@ export function FontPreview({
             />
           </label>
           <label className="grid gap-1 text-sm font-medium text-ink-700 dark:text-ink-100">
-            Weight
+            字重
             <select
               className="min-h-11 rounded-md border border-ink-200 bg-white px-3 text-base text-ink-900 dark:border-white/10 dark:bg-ink-900 dark:text-ink-50"
               value={weight}
@@ -90,8 +90,8 @@ export function FontPreview({
                 setWeight((event.currentTarget as HTMLSelectElement).value)
               }
             >
-              <option value="400">Regular</option>
-              <option value="700">Bold</option>
+              <option value="400">一般</option>
+              <option value="700">粗體</option>
             </select>
           </label>
         </div>
@@ -107,7 +107,7 @@ export function FontPreview({
           }}
           aria-describedby={id}
         >
-          Preview
+          預覽
         </button>
       ) : null}
 
@@ -120,11 +120,11 @@ export function FontPreview({
         </p>
         {!font.previewCssUrl ? (
           <p className="mt-4 text-sm text-ink-700 dark:text-ink-100">
-            No remote preview CSS is configured. Showing system fallback.
+            尚未設定遠端預覽 CSS，正在顯示系統備用字體。
           </p>
         ) : !loaded ? (
           <p className="mt-4 text-sm text-ink-700 dark:text-ink-100">
-            Remote font CSS is not loaded yet.
+            尚未載入遠端字體 CSS。
           </p>
         ) : null}
       </div>

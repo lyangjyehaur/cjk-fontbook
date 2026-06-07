@@ -21,7 +21,8 @@ describe("catalog queries", () => {
     expect(font?.name).toBe("Noto Sans CJK");
     expect(font?.languages.map((language) => language.languageCode)).toEqual([
       "SC",
-      "TC",
+      "TC-TW",
+      "TC-HK",
       "JP",
       "KR",
     ]);

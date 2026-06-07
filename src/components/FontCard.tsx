@@ -7,6 +7,15 @@ interface FontCardProps {
   previewText: string;
 }
 
+const categoryLabels: Record<string, string> = {
+  sans: "無襯線",
+  serif: "襯線",
+  rounded: "圓體",
+  mono: "等寬",
+  handwriting: "手寫",
+  pixel: "點陣",
+};
+
 export function FontCard({ font, previewText }: FontCardProps) {
   return (
     <article className="flex h-full flex-col gap-5 rounded-lg border border-ink-200 bg-white/82 p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-vermilion/40 hover:shadow-md dark:border-white/10 dark:bg-white/[0.06]">
@@ -30,7 +39,7 @@ export function FontCard({ font, previewText }: FontCardProps) {
       </div>
 
       <div className="flex flex-wrap gap-2">
-        <Badge tone="category">{font.category}</Badge>
+        <Badge tone="category">{categoryLabels[font.category] ?? font.category}</Badge>
         <Badge tone="license">{font.license}</Badge>
         {font.isSourceHanDerivative ? (
           <Badge tone="source-han">思源系</Badge>

@@ -4,18 +4,26 @@ import Layout from "../layouts/Layout.astro";
 import { getLicenseGroups } from "../lib/db/queries";
 
 const licenseGroups = await getLicenseGroups();
+const categoryLabels: Record<string, string> = {
+  sans: "無襯線",
+  serif: "襯線",
+  rounded: "圓體",
+  mono: "等寬",
+  handwriting: "手寫",
+  pixel: "點陣",
+};
 ---
 
 <Layout
-  title="Licenses"
-  description="Open-source licenses represented in the CJK Fontbook catalog."
+  title="授權條款"
+  description="CJK Fontbook 目錄中收錄字體的開源授權。"
 >
   <section class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
     <h1 class="text-4xl font-semibold text-ink-900 dark:text-ink-50">
-      Licenses
+      授權條款
     </h1>
     <p class="mt-3 max-w-2xl text-ink-700 dark:text-ink-100">
-      License summaries are catalog pointers, not legal advice. Always review the upstream font repository before shipping a font.
+      授權摘要僅作為目錄索引，不構成法律建議。正式使用字體前，請務必檢閱上游字體專案。
     </p>
 
     <div class="mt-10 space-y-6">
@@ -25,7 +33,7 @@ const licenseGroups = await getLicenseGroups();
             <h2 class="text-2xl font-semibold text-ink-900 dark:text-ink-50">
               {group.license}
             </h2>
-            <Badge tone="license">{group.fonts.length} fonts</Badge>
+            <Badge tone="license">{group.fonts.length} 個字體</Badge>
           </div>
           <ul class="mt-5 grid gap-3 sm:grid-cols-2">
             {group.fonts.map((font) => (
@@ -36,7 +44,7 @@ const licenseGroups = await getLicenseGroups();
                 >
                   <span class="block font-medium">{font.name}</span>
                   <span class="mt-1 block text-sm text-ink-700 dark:text-ink-100">
-                    {font.category} · {font.languages.map((language) => language.languageCode).join(", ")}
+                    {categoryLabels[font.category] ?? font.category} · {font.languages.map((language) => language.languageCode).join(", ")}
                   </span>
                 </a>
               </li>

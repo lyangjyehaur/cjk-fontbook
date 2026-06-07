@@ -18,12 +18,26 @@ if (!font) {
 }
 
 const description =
-  font.description ?? `${font.name} in the CJK Fontbook open-source catalog.`;
+  font.description ?? `${font.name} 收錄於 CJK Fontbook 開源字體目錄。`;
 const links = [
-  { label: "Source", href: font.sourceUrl },
-  { label: "Repository", href: font.repoUrl },
-  { label: "Homepage", href: font.homepageUrl },
+  { label: "來源", href: font.sourceUrl },
+  { label: "程式庫", href: font.repoUrl },
+  { label: "官方網站", href: font.homepageUrl },
 ].filter((link): link is { label: string; href: string } => Boolean(link.href));
+const categoryLabels: Record<string, string> = {
+  sans: "無襯線",
+  serif: "襯線",
+  rounded: "圓體",
+  mono: "等寬",
+  handwriting: "手寫",
+  pixel: "點陣",
+};
+const coverageLabels: Record<string, string> = {
+  full: "完整",
+  partial: "部分",
+  experimental: "實驗",
+  none: "無",
+};
 ---
 
 <Layout title={font.name} description={description} ogType="article">
@@ -31,7 +45,7 @@ const links = [
     <header class="grid gap-8 lg:grid-cols-[1fr_320px]">
       <div>
         <p class="text-sm font-semibold uppercase tracking-[0.18em] text-vermilion">
-          Font detail
+          字體詳情
         </p>
         <h1 class="mt-4 text-5xl font-semibold tracking-normal text-ink-900 dark:text-ink-50">
           {font.name}
@@ -48,29 +62,29 @@ const links = [
       <aside class="rounded-lg border border-ink-200 bg-white/78 p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.06]">
         <dl class="space-y-4 text-sm">
           <div>
-            <dt class="font-medium text-ink-900 dark:text-ink-50">License</dt>
+            <dt class="font-medium text-ink-900 dark:text-ink-50">授權</dt>
             <dd class="mt-1 text-ink-700 dark:text-ink-100">{font.license}</dd>
           </div>
           <div>
-            <dt class="font-medium text-ink-900 dark:text-ink-50">Author</dt>
-            <dd class="mt-1 text-ink-700 dark:text-ink-100">{font.author ?? "Unknown"}</dd>
+            <dt class="font-medium text-ink-900 dark:text-ink-50">作者</dt>
+            <dd class="mt-1 text-ink-700 dark:text-ink-100">{font.author ?? "未知"}</dd>
           </div>
           <div>
-            <dt class="font-medium text-ink-900 dark:text-ink-50">Variable</dt>
-            <dd class="mt-1 text-ink-700 dark:text-ink-100">{font.isVariable ? "Yes" : "No"}</dd>
+            <dt class="font-medium text-ink-900 dark:text-ink-50">可變字重</dt>
+            <dd class="mt-1 text-ink-700 dark:text-ink-100">{font.isVariable ? "是" : "否"}</dd>
           </div>
         </dl>
       </aside>
     </header>
 
-    <section class="mt-8 flex flex-wrap gap-2" aria-label="Font metadata">
-      <Badge tone="category">{font.category}</Badge>
+    <section class="mt-8 flex flex-wrap gap-2" aria-label="字體中繼資料">
+      <Badge tone="category">{categoryLabels[font.category] ?? font.category}</Badge>
       <Badge tone="license">{font.license}</Badge>
       {font.isSourceHanDerivative ? (
         <Badge tone="source-han">思源系</Badge>
       ) : null}
       {font.languages.map((language) => (
-        <Badge tone="language">{language.languageCode} {language.coverageLevel}</Badge>
+        <Badge tone="language">{language.languageCode} {coverageLabels[language.coverageLevel] ?? language.coverageLevel}</Badge>
       ))}
       {font.tags.map((tag) => (
         <Badge>{tag}</Badge>
@@ -79,7 +93,7 @@ const links = [
 
     <section class="mt-10" aria-labelledby="preview-heading">
       <h2 id="preview-heading" class="mb-4 text-2xl font-semibold text-ink-900 dark:text-ink-50">
-        Preview
+        預覽
       </h2>
       <FontPreview client:load font={font} loadOnMount />
     </section>
@@ -87,7 +101,7 @@ const links = [
     <section class="mt-10 grid gap-6 lg:grid-cols-2">
       <div class="rounded-lg border border-ink-200 bg-white/78 p-6 dark:border-white/10 dark:bg-white/[0.06]">
         <h2 class="text-xl font-semibold text-ink-900 dark:text-ink-50">
-          Links
+          連結
         </h2>
         <dl class="mt-5 space-y-3 text-sm">
           {links.map((link) => (
@@ -105,7 +119,7 @@ const links = [
 
       <div class="rounded-lg border border-ink-200 bg-white/78 p-6 dark:border-white/10 dark:bg-white/[0.06]">
         <h2 class="text-xl font-semibold text-ink-900 dark:text-ink-50">
-          CSS usage
+          CSS 用法
         </h2>
         <pre class="mt-5 overflow-x-auto rounded-md bg-ink-900 p-4 text-sm text-ink-50"><code>{font.previewCssUrl ? `@import url("${font.previewCssUrl}");\n\n.example {\n  font-family: ${font.cssFontFamily ?? `"${font.name}", sans-serif`};\n}` : `.example {\n  font-family: ${font.cssFontFamily ?? `"${font.name}", sans-serif`};\n}`}</code></pre>
       </div>
@@ -114,7 +128,7 @@ const links = [
     {font.notes ? (
       <section class="mt-6 rounded-lg border border-ink-200 bg-white/78 p-6 dark:border-white/10 dark:bg-white/[0.06]">
         <h2 class="text-xl font-semibold text-ink-900 dark:text-ink-50">
-          Notes
+          注意事項
         </h2>
         <p class="mt-3 leading-7 text-ink-700 dark:text-ink-100">
           {font.notes}

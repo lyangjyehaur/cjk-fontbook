@@ -15,6 +15,22 @@ interface FontFilterPanelProps {
   fonts: FontRecord[];
 }
 
+const listGridClass =
+  "grid-cols-[minmax(14rem,1.35fr)_minmax(5.5rem,0.65fr)_minmax(6.5rem,0.7fr)_minmax(6rem,0.65fr)_minmax(4.5rem,0.45fr)_2rem]";
+
+const optionLabels: Record<string, string> = {
+  all: "全部",
+  yes: "是",
+  no: "否",
+  Other: "其他",
+  sans: "無襯線",
+  serif: "襯線",
+  rounded: "圓體",
+  mono: "等寬",
+  handwriting: "手寫",
+  pixel: "點陣",
+};
+
 function licenseMatches(license: string, filter: LicenseFilter) {
   if (filter === "Other") {
     return !["OFL", "Apache", "MIT"].some((known) =>
@@ -69,7 +85,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
     <section className="space-y-8" aria-labelledby="catalog-heading">
       <div className="grid gap-4 rounded-lg border border-ink-200 bg-white/78 p-4 shadow-sm dark:border-white/10 dark:bg-white/[0.06] lg:grid-cols-[1fr_1fr]">
         <label className="grid gap-2 text-sm font-medium text-ink-700 dark:text-ink-100">
-          Custom preview text
+          自訂預覽文字
           <input
             className="min-h-12 rounded-md border border-ink-200 bg-white px-4 text-base text-ink-900 outline-none transition focus:border-vermilion dark:border-white/10 dark:bg-ink-900 dark:text-ink-50"
             value={previewText}
@@ -79,7 +95,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           />
         </label>
         <label className="grid gap-2 text-sm font-medium text-ink-700 dark:text-ink-100">
-          Search fonts
+          搜尋字體
           <span className="relative">
             <Search
               aria-hidden="true"
@@ -96,25 +112,25 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           </span>
         </label>
         <FilterSelect
-          label="Language"
+          label="語言"
           value={language}
           options={LANGUAGE_CODES}
           onChange={(value) => setLanguage(value as LanguageCode | "all")}
         />
         <FilterSelect
-          label="Category"
+          label="分類"
           value={category}
           options={CATEGORIES}
           onChange={(value) => setCategory(value as Category | "all")}
         />
         <FilterSelect
-          label="License"
+          label="授權"
           value={license}
           options={LICENSE_FILTERS}
           onChange={(value) => setLicense(value as LicenseFilter | "all")}
         />
         <FilterSelect
-          label="Source Han Derivative"
+          label="思源系"
           value={sourceHan}
           options={["yes", "no"]}
           onChange={(value) => setSourceHan(value as "all" | "yes" | "no")}
@@ -127,23 +143,23 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
             id="catalog-heading"
             className="text-2xl font-semibold tracking-normal text-ink-900 dark:text-ink-50"
           >
-            Font Catalog
+            字體目錄
           </h2>
           <p className="mt-1 text-sm text-ink-700 dark:text-ink-100">
-            {filteredFonts.length} of {fonts.length} fonts shown
+            顯示 {filteredFonts.length} / {fonts.length} 個字體
           </p>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-ink-200 dark:border-white/10">
+      <div className="overflow-x-auto rounded-lg border border-ink-200 dark:border-white/10">
         {/* Header row */}
-        <div className="grid grid-cols-[1fr_auto_auto_auto_auto_auto] gap-4 bg-ink-100/50 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-ink-700 dark:bg-white/5 dark:text-ink-100">
-          <span>Name</span>
-          <span className="w-20">Category</span>
-          <span className="w-20">License</span>
-          <span className="w-16">Languages</span>
-          <span className="w-16">思源系</span>
-          <span className="w-8" />
+        <div className={`grid min-w-[760px] ${listGridClass} gap-3 bg-ink-100/50 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-ink-700 dark:bg-white/5 dark:text-ink-100`}>
+          <span>名稱</span>
+          <span>分類</span>
+          <span>授權</span>
+          <span>語言</span>
+          <span>思源系</span>
+          <span />
         </div>
 
         {filteredFonts.map((font) => {
@@ -159,7 +175,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
             >
               {/* Row */}
               <button
-                className="grid w-full grid-cols-[1fr_auto_auto_auto_auto_auto] items-center gap-4 px-4 py-3 text-left transition"
+                className={`grid min-w-[760px] w-full ${listGridClass} items-center gap-3 px-4 py-3 text-left transition`}
                 onClick={() => toggleExpand(font.slug)}
                 aria-expanded={isExpanded}
               >
@@ -177,29 +193,29 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
                     </p>
                   ) : null}
                 </div>
-                <span className="w-20">
-                  <Badge tone="category">{font.category}</Badge>
+                <span className="min-w-0">
+                  <Badge tone="category">{optionLabels[font.category] ?? font.category}</Badge>
                 </span>
-                <span className="w-20">
+                <span className="min-w-0">
                   <Badge tone="license">{font.license}</Badge>
                 </span>
-                <span className="flex w-16 flex-wrap gap-1">
+                <span className="flex min-w-0 flex-wrap gap-1">
                   {font.languages.map((lang) => (
                     <Badge tone="language" key={lang.languageCode}>
                       {lang.languageCode}
                     </Badge>
                   ))}
                 </span>
-                <span className="w-16">
+                <span className="min-w-0">
                   {font.isSourceHanDerivative ? (
-                    <Badge tone="source-han">Yes</Badge>
+                    <Badge tone="source-han">是</Badge>
                   ) : (
                     <span className="text-xs text-ink-200 dark:text-white/20">
                       —
                     </span>
                   )}
                 </span>
-                <span className="flex w-8 justify-center">
+                <span className="flex justify-center">
                   {isExpanded ? (
                     <ChevronDown className="h-4 w-4 text-ink-700 dark:text-ink-100" />
                   ) : (
@@ -226,7 +242,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
 
         {filteredFonts.length === 0 ? (
           <p className="px-4 py-8 text-center text-ink-700 dark:text-ink-100">
-            No fonts match the current filters.
+            沒有符合條件的字體。
           </p>
         ) : null}
       </div>
@@ -246,16 +262,16 @@ function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
     <label className="grid gap-2 text-sm font-medium text-ink-700 dark:text-ink-100">
       {label}
       <select
-        className="min-h-12 rounded-md border border-ink-200 bg-white px-4 text-base capitalize text-ink-900 outline-none transition focus:border-vermilion dark:border-white/10 dark:bg-ink-900 dark:text-ink-50"
+        className="min-h-12 rounded-md border border-ink-200 bg-white px-4 text-base text-ink-900 outline-none transition focus:border-vermilion dark:border-white/10 dark:bg-ink-900 dark:text-ink-50"
         value={value}
         onChange={(event) =>
           onChange((event.currentTarget as HTMLSelectElement).value)
         }
       >
-        <option value="all">All</option>
+        <option value="all">全部</option>
         {options.map((option) => (
           <option key={option} value={option}>
-            {option}
+            {optionLabels[option] ?? option}
           </option>
         ))}
       </select>
