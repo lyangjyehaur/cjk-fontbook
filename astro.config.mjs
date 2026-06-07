@@ -1,12 +1,9 @@
 import preact from "@astrojs/preact";
-import tailwindcss from "@tailwindcss/vite";
+import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
   output: "static",
-  integrations: [preact()],
+  integrations: [preact(), tailwind()],
   site: "https://fontbook.dan.tw",
-  vite: {
-    plugins: [tailwindcss()],
-  },
 });
