@@ -84,6 +84,9 @@ const coverageLabels: Record<string, string> = {
       {font.languages.map((language) => (
         <Badge tone="language">{REGION_LABELS[language.languageCode]} {coverageLabels[language.coverageLevel] ?? language.coverageLevel}</Badge>
       ))}
+      {font.isSourceHanDerivative ? (
+        <Badge tone="language">思源系</Badge>
+      ) : null}
       {font.tags.map((tag) => (
         <Badge>{tag}</Badge>
       ))}

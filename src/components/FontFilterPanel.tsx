@@ -48,6 +48,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
   const [language, setLanguage] = useState<LanguageCode | "all">("all");
   const [category, setCategory] = useState<Category | "all">("all");
   const [license, setLicense] = useState<LicenseFilter | "all">("all");
+  const [sourceHan, setSourceHan] = useState<"all" | "yes" | "no">("all");
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
 
   const filteredFonts = useMemo(() => {
@@ -66,15 +67,21 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
         category === "all" || font.category === category;
       const matchesLicense =
         license === "all" || licenseMatches(font.license, license);
+      const matchesSourceHan =
+        sourceHan === "all" ||
+        (sourceHan === "yes"
+          ? font.isSourceHanDerivative
+          : !font.isSourceHanDerivative);
 
       return (
         matchesQuery &&
         matchesLanguage &&
         matchesCategory &&
-        matchesLicense
+        matchesLicense &&
+        matchesSourceHan
       );
     });
-  }, [category, fonts, language, license, query]);
+  }, [category, fonts, language, license, query, sourceHan]);
 
   function toggleExpand(slug: string) {
     setExpandedSlug((prev) => (prev === slug ? null : slug));
@@ -128,6 +135,12 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           value={license}
           options={LICENSE_FILTERS}
           onChange={(value) => setLicense(value as LicenseFilter | "all")}
+        />
+        <FilterSelect
+          label="思源系"
+          value={sourceHan}
+          options={["yes", "no"]}
+          onChange={(value) => setSourceHan(value as "all" | "yes" | "no")}
         />
       </div>
 
@@ -198,6 +211,9 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
                       {REGION_LABELS[lang.languageCode]}
                     </Badge>
                   ))}
+                  {font.isSourceHanDerivative ? (
+                    <Badge tone="language">思源系</Badge>
+                  ) : null}
                 </span>
                 <span className="flex justify-center">
                   {isExpanded ? (

@@ -28,7 +28,6 @@ describe("catalog queries", () => {
       "JP",
       "KR",
       "HERITAGE",
-      "SOURCE-HAN",
     ]);
     expect(REGION_LABELS).toEqual({
       SC: "簡體",
@@ -37,7 +36,6 @@ describe("catalog queries", () => {
       JP: "日文",
       KR: "韓文",
       HERITAGE: "傳承字形",
-      "SOURCE-HAN": "思源系",
     } satisfies Record<LanguageCode, string>);
   });
 
@@ -62,13 +60,24 @@ describe("catalog queries", () => {
     expect(fonts.map((font) => font.slug)).not.toContain("shippori-mincho");
   });
 
-  it("treats Source Han derivatives as a region language", async () => {
-    const fonts = await getFontsByLanguage("SOURCE-HAN");
+  it("tracks Source Han derivatives as a font attribute", async () => {
+    const fonts = await getAllFonts();
 
-    expect(fonts.map((font) => font.slug)).toEqual([
+    expect(
+      fonts
+        .filter((font) => font.isSourceHanDerivative)
+        .map((font) => font.slug),
+    ).toEqual([
       "pretendard",
       "sarasa-gothic",
     ]);
+    expect(
+      fonts.some((font) =>
+        font.languages.some(
+          (language) => String(language.languageCode) === "SOURCE-HAN",
+        ),
+      ),
+    ).toBe(false);
   });
 
   it("groups fonts by license", async () => {

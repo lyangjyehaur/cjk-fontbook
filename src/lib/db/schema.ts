@@ -20,6 +20,7 @@ export const fonts = pgTable("fonts", {
   author: text("author"),
   category: text("category"),
   isVariable: boolean("is_variable").default(false),
+  isSourceHanDerivative: boolean("is_source_han_derivative").default(false),
   cssFontFamily: text("css_font_family"),
   previewCssUrl: text("preview_css_url"),
   notes: text("notes"),

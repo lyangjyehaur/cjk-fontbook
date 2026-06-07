@@ -65,8 +65,8 @@ describe("Traditional Chinese UI copy", () => {
 
     expect(filterPanel).not.toContain('label="語言"');
     expect(filterPanel).not.toContain("<span>語言</span>");
-    expect(filterPanel).not.toContain('label="思源系"');
     expect(filterPanel).not.toContain('label="傳承字形"');
+    expect(filterPanel).toContain('label="思源系"');
     expect(filterPanel).toContain("options={LANGUAGE_CODES}");
     expect(filterPanel).toContain("optionLabels={REGION_LABELS}");
   });

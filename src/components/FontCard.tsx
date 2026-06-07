@@ -46,6 +46,9 @@ export function FontCard({ font, previewText }: FontCardProps) {
             {REGION_LABELS[language.languageCode]}
           </Badge>
         ))}
+        {font.isSourceHanDerivative ? (
+          <Badge tone="language">思源系</Badge>
+        ) : null}
       </div>
 
       <div className="mt-auto">
