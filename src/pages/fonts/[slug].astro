@@ -3,7 +3,7 @@ import { Badge } from "../../components/Badge";
 import { FontPreview } from "../../components/FontPreview";
 import Layout from "../../layouts/Layout.astro";
 import { getAllFonts, getFontBySlug } from "../../lib/db/queries";
-import { REGION_LABELS } from "../../lib/catalog";
+import { GLYPH_LABELS } from "../../lib/catalog";
 
 export async function getStaticPaths() {
   const fonts = await getAllFonts();
@@ -82,7 +82,7 @@ const coverageLabels: Record<string, string> = {
       <Badge tone="category">{categoryLabels[font.category] ?? font.category}</Badge>
       <Badge tone="license">{font.license}</Badge>
       {font.languages.map((language) => (
-        <Badge tone="language">{REGION_LABELS[language.languageCode]} {coverageLabels[language.coverageLevel] ?? language.coverageLevel}</Badge>
+        <Badge tone="language">{GLYPH_LABELS[language.languageCode]} {coverageLabels[language.coverageLevel] ?? language.coverageLevel}</Badge>
       ))}
       {font.isSourceHanDerivative ? (
         <Badge tone="language">思源系</Badge>

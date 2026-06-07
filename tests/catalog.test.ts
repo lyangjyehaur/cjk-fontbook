@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  GLYPH_LABELS,
   LANGUAGE_CODES,
-  REGION_LABELS,
   type LanguageCode,
 } from "../src/lib/catalog";
 import {
@@ -29,7 +29,7 @@ describe("catalog queries", () => {
       "KR",
       "HERITAGE",
     ]);
-    expect(REGION_LABELS).toEqual({
+    expect(GLYPH_LABELS).toEqual({
       SC: "簡體",
       "TC-TW": "繁體（臺灣）",
       "TC-HK": "繁體（香港）",

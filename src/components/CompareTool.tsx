@@ -1,6 +1,6 @@
 import { useMemo, useState } from "preact/hooks";
 import type { FontRecord } from "../lib/catalog";
-import { defaultPreviewText, REGION_LABELS } from "../lib/catalog";
+import { defaultPreviewText, GLYPH_LABELS } from "../lib/catalog";
 import { FontPreview } from "./FontPreview";
 
 interface CompareToolProps {
@@ -86,7 +86,7 @@ export function CompareTool({ fonts }: CompareToolProps) {
                   {font.name}
                 </span>
                 <span className="block text-ink-700 dark:text-ink-100">
-                  {categoryLabels[font.category] ?? font.category} · {font.languages.map((language) => REGION_LABELS[language.languageCode]).join(", ")}
+                  {categoryLabels[font.category] ?? font.category} · {font.languages.map((language) => GLYPH_LABELS[language.languageCode]).join(", ")}
                 </span>
               </span>
             </label>

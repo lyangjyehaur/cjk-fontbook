@@ -1,6 +1,6 @@
 import { Badge } from "./Badge";
 import { FontPreview } from "./FontPreview";
-import { REGION_LABELS, type FontRecord } from "../lib/catalog";
+import { GLYPH_LABELS, type FontRecord } from "../lib/catalog";
 
 interface FontCardProps {
   font: FontRecord;
@@ -43,7 +43,7 @@ export function FontCard({ font, previewText }: FontCardProps) {
         <Badge tone="license">{font.license}</Badge>
         {font.languages.map((language) => (
           <Badge tone="language" key={language.languageCode}>
-            {REGION_LABELS[language.languageCode]}
+            {GLYPH_LABELS[language.languageCode]}
           </Badge>
         ))}
         {font.isSourceHanDerivative ? (

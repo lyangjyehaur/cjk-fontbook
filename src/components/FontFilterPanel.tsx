@@ -6,7 +6,7 @@ import {
   defaultPreviewText,
   LANGUAGE_CODES,
   LICENSE_FILTERS,
-  REGION_LABELS,
+  GLYPH_LABELS,
   type LicenseFilter,
 } from "../lib/catalog";
 import { Badge } from "./Badge";
@@ -45,7 +45,7 @@ function licenseMatches(license: string, filter: LicenseFilter) {
 export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
   const [query, setQuery] = useState("");
   const [previewText, setPreviewText] = useState(defaultPreviewText);
-  const [language, setLanguage] = useState<LanguageCode | "all">("all");
+  const [selectedGlyphs, setSelectedGlyphs] = useState<LanguageCode[]>([]);
   const [category, setCategory] = useState<Category | "all">("all");
   const [license, setLicense] = useState<LicenseFilter | "all">("all");
   const [sourceHan, setSourceHan] = useState<"all" | "yes" | "no">("all");
@@ -60,9 +60,11 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
         [font.name, font.displayName, font.author, ...font.tags]
           .filter(Boolean)
           .some((value) => value!.toLowerCase().includes(normalizedQuery));
-      const matchesLanguage =
-        language === "all" ||
-        font.languages.some((entry) => entry.languageCode === language);
+      const matchesGlyphs =
+        selectedGlyphs.length === 0 ||
+        font.languages.some((entry) =>
+          selectedGlyphs.includes(entry.languageCode),
+        );
       const matchesCategory =
         category === "all" || font.category === category;
       const matchesLicense =
@@ -75,16 +77,24 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
 
       return (
         matchesQuery &&
-        matchesLanguage &&
+        matchesGlyphs &&
         matchesCategory &&
         matchesLicense &&
         matchesSourceHan
       );
     });
-  }, [category, fonts, language, license, query, sourceHan]);
+  }, [category, fonts, license, query, selectedGlyphs, sourceHan]);
 
   function toggleExpand(slug: string) {
     setExpandedSlug((prev) => (prev === slug ? null : slug));
+  }
+
+  function toggleGlyph(glyph: LanguageCode) {
+    setSelectedGlyphs((current) =>
+      current.includes(glyph)
+        ? current.filter((selectedGlyph) => selectedGlyph !== glyph)
+        : [...current, glyph],
+    );
   }
 
   return (
@@ -117,12 +127,13 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
             />
           </span>
         </label>
-        <FilterSelect
-          label="地區"
-          value={language}
+        <FilterChips
+          label="字形區別"
+          selectedGlyphs={selectedGlyphs}
           options={LANGUAGE_CODES}
-          optionLabels={REGION_LABELS}
-          onChange={(value) => setLanguage(value as LanguageCode | "all")}
+          optionLabels={GLYPH_LABELS}
+          onClear={() => setSelectedGlyphs([])}
+          onToggle={toggleGlyph}
         />
         <FilterSelect
           label="分類"
@@ -164,7 +175,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           <span>名稱</span>
           <span>分類</span>
           <span>授權</span>
-          <span>地區</span>
+          <span>字形區別</span>
           <span />
         </div>
 
@@ -208,7 +219,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
                 <span className="flex min-w-0 flex-wrap gap-1">
                   {font.languages.map((lang) => (
                     <Badge tone="language" key={lang.languageCode}>
-                      {REGION_LABELS[lang.languageCode]}
+                      {GLYPH_LABELS[lang.languageCode]}
                     </Badge>
                   ))}
                   {font.isSourceHanDerivative ? (
@@ -256,6 +267,63 @@ interface FilterSelectProps {
   options: readonly string[];
   optionLabels?: Record<string, string>;
   onChange: (value: string) => void;
+}
+
+interface FilterChipsProps {
+  label: string;
+  selectedGlyphs: LanguageCode[];
+  options: readonly LanguageCode[];
+  optionLabels: Record<LanguageCode, string>;
+  onClear: () => void;
+  onToggle: (value: LanguageCode) => void;
+}
+
+function FilterChips({
+  label,
+  selectedGlyphs,
+  options,
+  optionLabels,
+  onClear,
+  onToggle,
+}: FilterChipsProps) {
+  return (
+    <fieldset className="grid gap-2 text-sm font-medium text-ink-700 dark:text-ink-100">
+      <legend>{label}</legend>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+            selectedGlyphs.length === 0
+              ? "border-vermilion bg-vermilion text-white"
+              : "border-ink-200 bg-white text-ink-700 hover:border-vermilion hover:text-vermilion dark:border-white/10 dark:bg-ink-900 dark:text-ink-100"
+          }`}
+          aria-pressed={selectedGlyphs.length === 0}
+          onClick={onClear}
+        >
+          全部
+        </button>
+        {options.map((option) => {
+          const selected = selectedGlyphs.includes(option);
+
+          return (
+            <button
+              type="button"
+              key={option}
+              className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+                selected
+                  ? "border-vermilion bg-vermilion text-white"
+                  : "border-ink-200 bg-white text-ink-700 hover:border-vermilion hover:text-vermilion dark:border-white/10 dark:bg-ink-900 dark:text-ink-100"
+              }`}
+              aria-pressed={selectedGlyphs.includes(option)}
+              onClick={() => onToggle(option)}
+            >
+              {optionLabels[option]}
+            </button>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
 }
 
 function FilterSelect({

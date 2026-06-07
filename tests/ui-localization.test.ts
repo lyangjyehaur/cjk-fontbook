@@ -24,8 +24,8 @@ describe("Traditional Chinese UI copy", () => {
 
     expect(source).toContain("自訂預覽文字");
     expect(source).toContain("搜尋字體");
-    expect(source).toContain('label="地區"');
-    expect(source).toContain("<span>地區</span>");
+    expect(source).toContain('label="字形區別"');
+    expect(source).toContain("<span>字形區別</span>");
     expect(source).toContain("傳承字形");
     expect(source).toContain("思源系");
     expect(source).toContain("字體目錄");
@@ -60,14 +60,17 @@ describe("Traditional Chinese UI copy", () => {
     }
   });
 
-  it("does not show region filters as language labels", () => {
+  it("does not show glyph distinction filters as language labels", () => {
     const filterPanel = readFileSync("src/components/FontFilterPanel.tsx", "utf8");
 
     expect(filterPanel).not.toContain('label="語言"');
     expect(filterPanel).not.toContain("<span>語言</span>");
     expect(filterPanel).not.toContain('label="傳承字形"');
     expect(filterPanel).toContain('label="思源系"');
+    expect(filterPanel).toContain('label="字形區別"');
     expect(filterPanel).toContain("options={LANGUAGE_CODES}");
-    expect(filterPanel).toContain("optionLabels={REGION_LABELS}");
+    expect(filterPanel).toContain("optionLabels={GLYPH_LABELS}");
+    expect(filterPanel).toContain('aria-pressed={selectedGlyphs.includes(option)}');
+    expect(filterPanel).toContain("onClear={() => setSelectedGlyphs([])}");
   });
 });

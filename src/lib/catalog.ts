@@ -21,7 +21,7 @@ export type Category = (typeof CATEGORIES)[number];
 export type LicenseFilter = (typeof LICENSE_FILTERS)[number];
 export type CoverageLevel = "full" | "partial" | "experimental" | "none";
 
-export const REGION_LABELS: Record<LanguageCode, string> = {
+export const GLYPH_LABELS: Record<LanguageCode, string> = {
   SC: "簡體",
   "TC-TW": "繁體（臺灣）",
   "TC-HK": "繁體（香港）",
