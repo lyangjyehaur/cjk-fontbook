@@ -329,15 +329,14 @@ function FilterChips({
         onSubmit={(event) => event.preventDefault()}
       >
         {options.map((option) => (
-          <label key={option} className="flex items-center">
-            <input
-              type="checkbox"
-              className="btn btn-sm"
-              aria-label={optionLabels[option] ?? option}
-              checked={selectedGlyphs.includes(option)}
-              onChange={() => onToggle(option)}
-            />
-          </label>
+          <input
+            key={option}
+            type="checkbox"
+            className="btn btn-sm"
+            aria-label={optionLabels[option] ?? option}
+            checked={selectedGlyphs.includes(option)}
+            onChange={() => onToggle(option)}
+          />
         ))}
         <button type="reset" className="btn btn-sm btn-ghost" onClick={onClear}>
           ×<span className="sr-only">清除篩選</span>
