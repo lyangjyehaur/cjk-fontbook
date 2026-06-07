@@ -339,11 +339,10 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
         </table>
       </div>
 
-      <div className="flex justify-center">
-        <div className="join">
+      <div className="flex flex-wrap items-center justify-center gap-2">
           <button
             type="button"
-            className="join-item btn btn-sm"
+            className="btn btn-sm btn-outline"
             aria-label="上一頁"
             disabled={currentPage === 1}
             onClick={() => setCurrentPage(currentPage - 1)}
@@ -352,19 +351,17 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           </button>
           {visiblePageItems.map((item, index) =>
             item === "ellipsis" ? (
-              <button
+              <span
                 key={`ellipsis-${index}`}
-                type="button"
-                className="join-item btn btn-sm btn-disabled"
-                disabled
+                className="btn btn-sm btn-disabled"
               >
                 ...
-              </button>
+              </span>
             ) : (
               <button
                 key={item}
                 type="button"
-                className={`join-item btn btn-sm ${item === currentPage ? "btn-primary" : "btn-ghost"}`}
+                className={`btn btn-sm ${item === currentPage ? "btn-primary" : "btn-outline"}`}
                 aria-current={item === currentPage ? "page" : undefined}
                 aria-label={`前往第 ${item} 頁`}
                 onClick={() => setCurrentPage(item)}
@@ -375,7 +372,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           )}
           <button
             type="button"
-            className="join-item btn btn-sm"
+            className="btn btn-sm btn-outline"
             aria-label="下一頁"
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage(currentPage + 1)}
@@ -383,7 +380,6 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
             »
           </button>
         </div>
-      </div>
     </section>
   );
 }
