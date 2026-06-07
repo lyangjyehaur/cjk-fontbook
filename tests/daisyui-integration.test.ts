@@ -35,7 +35,6 @@ describe("DaisyUI integration", () => {
       "btn",
       "btn-sm",
       "btn-outline",
-      "btn-active",
       "input",
       "select",
       "textarea",

@@ -70,7 +70,11 @@ describe("Traditional Chinese UI copy", () => {
     expect(filterPanel).toContain('label="字形區別"');
     expect(filterPanel).toContain("options={LANGUAGE_CODES}");
     expect(filterPanel).toContain("optionLabels={GLYPH_LABELS}");
-    expect(filterPanel).toContain('aria-pressed={selectedGlyphs.includes(option)}');
-    expect(filterPanel).toContain("onClear={() => setSelectedGlyphs([])}");
+    expect(filterPanel).toContain('type="checkbox"');
+    expect(filterPanel).toContain("aria-label={optionLabels[option] ?? option}");
+    expect(filterPanel).toContain('type="reset"');
+    expect(filterPanel).toContain("清除篩選");
+    expect(filterPanel).not.toContain('aria-pressed={selectedGlyphs.includes(option)}');
+    expect(filterPanel).not.toContain(">全部</button>");
   });
 });

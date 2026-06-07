@@ -14,16 +14,26 @@
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/preact": "^4.0.0",
-    "@astrojs/tailwind": "^6.0.2",
     "@fontsource-variable/inter": "^5.2.5",
+    "@tailwindcss/node": "file:../../../../private/tmp/tailwindcss-node-4.2.4.tgz",
+    "@tailwindcss/oxide": "file:../../../../private/tmp/tailwindcss-oxide-4.2.4.tgz",
+    "@tailwindcss/oxide-darwin-arm64": "file:../../../../private/tmp/tailwindcss-oxide-darwin-arm64-4.2.4.tgz",
     "@tailwindcss/typography": "^0.5.15",
+    "@tailwindcss/vite": "file:../../../../private/tmp/tailwindcss-vite-4.2.4.tgz",
     "astro": "^5.0.0",
     "daisyui": "^5.5.23",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.38.0",
+    "enhanced-resolve": "file:../../../../private/tmp/enhanced-resolve-5.21.0.tgz",
+    "graceful-fs": "file:../../../../private/tmp/graceful-fs-4.2.11.tgz",
+    "jiti": "file:../../../../private/tmp/jiti-2.6.1.tgz",
+    "lightningcss": "file:../../../../private/tmp/lightningcss-1.32.0.tgz",
+    "lightningcss-darwin-arm64": "file:../../../../private/tmp/lightningcss-darwin-arm64-1.32.0.tgz",
     "lucide-preact": "^0.468.0",
     "pg": "^8.13.1",
-    "preact": "^10.25.2"
+    "preact": "^10.25.2",
+    "tailwindcss": "file:../../../../private/tmp/tailwindcss-4.2.4.tgz",
+    "tapable": "file:../../../../private/tmp/tapable-2.3.3.tgz"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

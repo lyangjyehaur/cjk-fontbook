@@ -324,35 +324,25 @@ function FilterChips({
   return (
     <fieldset className="form-control grid gap-2 text-sm font-medium">
       <legend>{label}</legend>
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          className={`btn btn-sm btn-outline ${
-            selectedGlyphs.length === 0 ? "btn-active btn-primary" : ""
-          }`}
-          aria-pressed={selectedGlyphs.length === 0}
-          onClick={onClear}
-        >
-          全部
+      <form
+        className="flex flex-wrap items-center gap-2"
+        onSubmit={(event) => event.preventDefault()}
+      >
+        {options.map((option) => (
+          <label key={option} className="flex items-center">
+            <input
+              type="checkbox"
+              className="btn btn-sm"
+              aria-label={optionLabels[option] ?? option}
+              checked={selectedGlyphs.includes(option)}
+              onChange={() => onToggle(option)}
+            />
+          </label>
+        ))}
+        <button type="reset" className="btn btn-sm btn-ghost" onClick={onClear}>
+          ×<span className="sr-only">清除篩選</span>
         </button>
-        {options.map((option) => {
-          const selected = selectedGlyphs.includes(option);
-
-          return (
-            <button
-              type="button"
-              key={option}
-              className={`btn btn-sm btn-outline ${
-                selected ? "btn-active btn-primary" : ""
-              }`}
-              aria-pressed={selectedGlyphs.includes(option)}
-              onClick={() => onToggle(option)}
-            >
-              {optionLabels[option]}
-            </button>
-          );
-        })}
-      </div>
+      </form>
     </fieldset>
   );
 }
