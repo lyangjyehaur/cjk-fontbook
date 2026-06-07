@@ -25,6 +25,7 @@ export default {
   },
   plugins: [typography, daisyui],
   daisyui: {
-    themes: ["winter --default", "night --prefersdark"],
+    themes: ["winter", "night"],
+    darkTheme: "night",
   },
 };
