@@ -15,8 +15,9 @@ describe("catalog queries", () => {
   it("returns the seeded catalog fonts", async () => {
     const fonts = await getAllFonts();
 
-    expect(fonts).toHaveLength(40);
+    expect(fonts).toHaveLength(70);
     expect(fonts.map((font) => font.slug)).toContain("lxgw-wenkai");
+    expect(fonts.map((font) => font.slug)).toContain("fancy-free-font1");
     expect(fonts.every((font) => font.languages.length > 0)).toBe(true);
   });
 
@@ -87,6 +88,8 @@ describe("catalog queries", () => {
         .filter((font) => font.isSourceHanDerivative)
         .map((font) => font.slug),
     ).toEqual([
+      "lxgw-975gothic",
+      "lxgw-975maru",
       "pretendard",
       "sarasa-gothic",
       "source-han-rounded",
@@ -110,6 +113,6 @@ describe("catalog queries", () => {
     ]);
     expect(
       groups.find((group) => group.license === "OFL-1.1")?.fonts,
-    ).toHaveLength(32);
+    ).toHaveLength(58);
   });
 });
