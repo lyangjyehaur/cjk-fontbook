@@ -1,4 +1,4 @@
-import { Search } from "lucide-preact";
+import { ChevronDown, ChevronRight, Search } from "lucide-preact";
 import { useMemo, useState } from "preact/hooks";
 import type { Category, FontRecord, LanguageCode } from "../lib/catalog";
 import {
@@ -8,7 +8,8 @@ import {
   LICENSE_FILTERS,
   type LicenseFilter,
 } from "../lib/catalog";
-import { FontCard } from "./FontCard";
+import { Badge } from "./Badge";
+import { FontPreview } from "./FontPreview";
 
 interface FontFilterPanelProps {
   fonts: FontRecord[];
@@ -31,6 +32,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
   const [category, setCategory] = useState<Category | "all">("all");
   const [license, setLicense] = useState<LicenseFilter | "all">("all");
   const [sourceHan, setSourceHan] = useState<"all" | "yes" | "no">("all");
+  const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
 
   const filteredFonts = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -58,6 +60,10 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
       );
     });
   }, [category, fonts, language, license, query, sourceHan]);
+
+  function toggleExpand(slug: string) {
+    setExpandedSlug((prev) => (prev === slug ? null : slug));
+  }
 
   return (
     <section className="space-y-8" aria-labelledby="catalog-heading">
@@ -129,17 +135,101 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
         </div>
       </div>
 
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {filteredFonts.map((font) => (
-          <FontCard font={font} key={font.slug} previewText={previewText} />
-        ))}
-      </div>
+      <div className="overflow-hidden rounded-lg border border-ink-200 dark:border-white/10">
+        {/* Header row */}
+        <div className="grid grid-cols-[1fr_auto_auto_auto_auto_auto] gap-4 bg-ink-100/50 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-ink-700 dark:bg-white/5 dark:text-ink-100">
+          <span>Name</span>
+          <span className="w-20">Category</span>
+          <span className="w-20">License</span>
+          <span className="w-16">Languages</span>
+          <span className="w-16">思源系</span>
+          <span className="w-8" />
+        </div>
 
-      {filteredFonts.length === 0 ? (
-        <p className="rounded-lg border border-ink-200 bg-white/70 p-8 text-center text-ink-700 dark:border-white/10 dark:bg-white/5 dark:text-ink-100">
-          No fonts match the current filters.
-        </p>
-      ) : null}
+        {filteredFonts.map((font) => {
+          const isExpanded = expandedSlug === font.slug;
+          return (
+            <div
+              key={font.slug}
+              className={`border-t border-ink-200 dark:border-white/10 ${
+                isExpanded
+                  ? "bg-white dark:bg-white/[0.03]"
+                  : "bg-white/70 hover:bg-white dark:bg-white/[0.02] dark:hover:bg-white/[0.04]"
+              }`}
+            >
+              {/* Row */}
+              <button
+                className="grid w-full grid-cols-[1fr_auto_auto_auto_auto_auto] items-center gap-4 px-4 py-3 text-left transition"
+                onClick={() => toggleExpand(font.slug)}
+                aria-expanded={isExpanded}
+              >
+                <div className="min-w-0">
+                  <a
+                    className="text-base font-semibold text-ink-900 hover:text-vermilion dark:text-ink-50"
+                    href={`/fonts/${font.slug}/`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {font.name}
+                  </a>
+                  {font.displayName && font.displayName !== font.name ? (
+                    <p className="mt-0.5 truncate text-sm text-ink-700 dark:text-ink-100">
+                      {font.displayName}
+                    </p>
+                  ) : null}
+                </div>
+                <span className="w-20">
+                  <Badge tone="category">{font.category}</Badge>
+                </span>
+                <span className="w-20">
+                  <Badge tone="license">{font.license}</Badge>
+                </span>
+                <span className="flex w-16 flex-wrap gap-1">
+                  {font.languages.map((lang) => (
+                    <Badge tone="language" key={lang.languageCode}>
+                      {lang.languageCode}
+                    </Badge>
+                  ))}
+                </span>
+                <span className="w-16">
+                  {font.isSourceHanDerivative ? (
+                    <Badge tone="source-han">Yes</Badge>
+                  ) : (
+                    <span className="text-xs text-ink-200 dark:text-white/20">
+                      —
+                    </span>
+                  )}
+                </span>
+                <span className="flex w-8 justify-center">
+                  {isExpanded ? (
+                    <ChevronDown className="h-4 w-4 text-ink-700 dark:text-ink-100" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-ink-700 dark:text-ink-100" />
+                  )}
+                </span>
+              </button>
+
+              {/* Expanded preview */}
+              {isExpanded ? (
+                <div className="border-t border-ink-200 px-4 py-5 dark:border-white/10">
+                  <FontPreview
+                    compact
+                    defaultText={previewText}
+                    font={font}
+                    loadOnMount={true}
+                    showControls={true}
+                  />
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
+
+        {filteredFonts.length === 0 ? (
+          <p className="px-4 py-8 text-center text-ink-700 dark:text-ink-100">
+            No fonts match the current filters.
+          </p>
+        ) : null}
+      </div>
     </section>
   );
 }
