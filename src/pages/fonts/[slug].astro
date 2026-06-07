@@ -3,6 +3,7 @@ import { Badge } from "../../components/Badge";
 import { FontPreview } from "../../components/FontPreview";
 import Layout from "../../layouts/Layout.astro";
 import { getAllFonts, getFontBySlug } from "../../lib/db/queries";
+import { REGION_LABELS } from "../../lib/catalog";
 
 export async function getStaticPaths() {
   const fonts = await getAllFonts();
@@ -80,14 +81,8 @@ const coverageLabels: Record<string, string> = {
     <section class="mt-8 flex flex-wrap gap-2" aria-label="字體中繼資料">
       <Badge tone="category">{categoryLabels[font.category] ?? font.category}</Badge>
       <Badge tone="license">{font.license}</Badge>
-      {font.isSourceHanDerivative ? (
-        <Badge tone="source-han">思源系</Badge>
-      ) : null}
-      {font.isHeritageGlyph ? (
-        <Badge tone="heritage">傳承字形</Badge>
-      ) : null}
       {font.languages.map((language) => (
-        <Badge tone="language">{language.languageCode} {coverageLabels[language.coverageLevel] ?? language.coverageLevel}</Badge>
+        <Badge tone="language">{REGION_LABELS[language.languageCode]} {coverageLabels[language.coverageLevel] ?? language.coverageLevel}</Badge>
       ))}
       {font.tags.map((tag) => (
         <Badge>{tag}</Badge>

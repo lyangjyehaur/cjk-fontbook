@@ -6,6 +6,7 @@ import {
   defaultPreviewText,
   LANGUAGE_CODES,
   LICENSE_FILTERS,
+  REGION_LABELS,
   type LicenseFilter,
 } from "../lib/catalog";
 import { Badge } from "./Badge";
@@ -16,9 +17,9 @@ interface FontFilterPanelProps {
 }
 
 const listGridClass =
-  "grid-cols-[minmax(14rem,1.35fr)_minmax(5.5rem,0.65fr)_minmax(6.5rem,0.7fr)_minmax(6rem,0.65fr)_minmax(4.5rem,0.45fr)_2rem]";
+  "grid-cols-[minmax(14rem,1.35fr)_minmax(5.5rem,0.65fr)_minmax(6.5rem,0.7fr)_minmax(10rem,1fr)_2rem]";
 
-const optionLabels: Record<string, string> = {
+const defaultOptionLabels: Record<string, string> = {
   all: "全部",
   yes: "是",
   no: "否",
@@ -47,8 +48,6 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
   const [language, setLanguage] = useState<LanguageCode | "all">("all");
   const [category, setCategory] = useState<Category | "all">("all");
   const [license, setLicense] = useState<LicenseFilter | "all">("all");
-  const [sourceHan, setSourceHan] = useState<"all" | "yes" | "no">("all");
-  const [heritageGlyph, setHeritageGlyph] = useState<"all" | "yes" | "no">("all");
   const [expandedSlug, setExpandedSlug] = useState<string | null>(null);
 
   const filteredFonts = useMemo(() => {
@@ -67,25 +66,15 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
         category === "all" || font.category === category;
       const matchesLicense =
         license === "all" || licenseMatches(font.license, license);
-      const matchesSourceHan =
-        sourceHan === "all" ||
-        (sourceHan === "yes" && font.isSourceHanDerivative) ||
-        (sourceHan === "no" && !font.isSourceHanDerivative);
-      const matchesHeritageGlyph =
-        heritageGlyph === "all" ||
-        (heritageGlyph === "yes" && font.isHeritageGlyph) ||
-        (heritageGlyph === "no" && !font.isHeritageGlyph);
 
       return (
         matchesQuery &&
         matchesLanguage &&
         matchesCategory &&
-        matchesLicense &&
-        matchesSourceHan &&
-        matchesHeritageGlyph
+        matchesLicense
       );
     });
-  }, [category, fonts, heritageGlyph, language, license, query, sourceHan]);
+  }, [category, fonts, language, license, query]);
 
   function toggleExpand(slug: string) {
     setExpandedSlug((prev) => (prev === slug ? null : slug));
@@ -125,6 +114,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           label="地區"
           value={language}
           options={LANGUAGE_CODES}
+          optionLabels={REGION_LABELS}
           onChange={(value) => setLanguage(value as LanguageCode | "all")}
         />
         <FilterSelect
@@ -138,18 +128,6 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           value={license}
           options={LICENSE_FILTERS}
           onChange={(value) => setLicense(value as LicenseFilter | "all")}
-        />
-        <FilterSelect
-          label="思源系"
-          value={sourceHan}
-          options={["yes", "no"]}
-          onChange={(value) => setSourceHan(value as "all" | "yes" | "no")}
-        />
-        <FilterSelect
-          label="傳承字形"
-          value={heritageGlyph}
-          options={["yes", "no"]}
-          onChange={(value) => setHeritageGlyph(value as "all" | "yes" | "no")}
         />
       </div>
 
@@ -174,7 +152,6 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           <span>分類</span>
           <span>授權</span>
           <span>地區</span>
-          <span>思源系</span>
           <span />
         </div>
 
@@ -210,7 +187,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
                   ) : null}
                 </div>
                 <span className="min-w-0">
-                  <Badge tone="category">{optionLabels[font.category] ?? font.category}</Badge>
+                  <Badge tone="category">{defaultOptionLabels[font.category] ?? font.category}</Badge>
                 </span>
                 <span className="min-w-0">
                   <Badge tone="license">{font.license}</Badge>
@@ -218,18 +195,9 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
                 <span className="flex min-w-0 flex-wrap gap-1">
                   {font.languages.map((lang) => (
                     <Badge tone="language" key={lang.languageCode}>
-                      {lang.languageCode}
+                      {REGION_LABELS[lang.languageCode]}
                     </Badge>
                   ))}
-                </span>
-                <span className="min-w-0">
-                  {font.isSourceHanDerivative ? (
-                    <Badge tone="source-han">是</Badge>
-                  ) : (
-                    <span className="text-xs text-ink-200 dark:text-white/20">
-                      —
-                    </span>
-                  )}
                 </span>
                 <span className="flex justify-center">
                   {isExpanded ? (
@@ -270,10 +238,17 @@ interface FilterSelectProps {
   label: string;
   value: string;
   options: readonly string[];
+  optionLabels?: Record<string, string>;
   onChange: (value: string) => void;
 }
 
-function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
+function FilterSelect({
+  label,
+  value,
+  options,
+  optionLabels = defaultOptionLabels,
+  onChange,
+}: FilterSelectProps) {
   return (
     <label className="grid gap-2 text-sm font-medium text-ink-700 dark:text-ink-100">
       {label}

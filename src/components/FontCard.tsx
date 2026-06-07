@@ -1,6 +1,6 @@
 import { Badge } from "./Badge";
 import { FontPreview } from "./FontPreview";
-import type { FontRecord } from "../lib/catalog";
+import { REGION_LABELS, type FontRecord } from "../lib/catalog";
 
 interface FontCardProps {
   font: FontRecord;
@@ -41,15 +41,9 @@ export function FontCard({ font, previewText }: FontCardProps) {
       <div className="flex flex-wrap gap-2">
         <Badge tone="category">{categoryLabels[font.category] ?? font.category}</Badge>
         <Badge tone="license">{font.license}</Badge>
-        {font.isSourceHanDerivative ? (
-          <Badge tone="source-han">思源系</Badge>
-        ) : null}
-        {font.isHeritageGlyph ? (
-          <Badge tone="heritage">傳承字形</Badge>
-        ) : null}
         {font.languages.map((language) => (
           <Badge tone="language" key={language.languageCode}>
-            {language.languageCode}
+            {REGION_LABELS[language.languageCode]}
           </Badge>
         ))}
       </div>

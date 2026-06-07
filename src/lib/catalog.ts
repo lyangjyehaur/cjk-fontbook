@@ -1,4 +1,12 @@
-export const LANGUAGE_CODES = ["SC", "TC-TW", "TC-HK", "JP", "KR"] as const;
+export const LANGUAGE_CODES = [
+  "SC",
+  "TC-TW",
+  "TC-HK",
+  "JP",
+  "KR",
+  "HERITAGE",
+  "SOURCE-HAN",
+] as const;
 export const CATEGORIES = [
   "sans",
   "serif",
@@ -13,6 +21,16 @@ export type LanguageCode = (typeof LANGUAGE_CODES)[number];
 export type Category = (typeof CATEGORIES)[number];
 export type LicenseFilter = (typeof LICENSE_FILTERS)[number];
 export type CoverageLevel = "full" | "partial" | "experimental" | "none";
+
+export const REGION_LABELS: Record<LanguageCode, string> = {
+  SC: "簡體",
+  "TC-TW": "繁體（臺灣）",
+  "TC-HK": "繁體（香港）",
+  JP: "日文",
+  KR: "韓文",
+  HERITAGE: "傳承字形",
+  "SOURCE-HAN": "思源系",
+};
 
 export interface FontLanguage {
   languageCode: LanguageCode;
@@ -33,8 +51,6 @@ export interface FontRecord {
   author?: string;
   category: Category;
   isVariable: boolean;
-  isSourceHanDerivative: boolean;
-  isHeritageGlyph: boolean;
   cssFontFamily?: string;
   previewCssUrl?: string;
   notes?: string;
@@ -65,8 +81,6 @@ export const catalogFonts: FontRecord[] = [
     author: "Google",
     category: "sans",
     isVariable: false,
-    isSourceHanDerivative: false,
-    isHeritageGlyph: false,
     cssFontFamily: "'Noto Sans SC', 'Noto Sans CJK SC', sans-serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap",
@@ -89,8 +103,6 @@ export const catalogFonts: FontRecord[] = [
     author: "Google",
     category: "serif",
     isVariable: false,
-    isSourceHanDerivative: false,
-    isHeritageGlyph: false,
     cssFontFamily: "'Noto Serif SC', 'Noto Serif CJK SC', serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap",
@@ -113,8 +125,6 @@ export const catalogFonts: FontRecord[] = [
     author: "Adobe + Google",
     category: "sans",
     isVariable: false,
-    isSourceHanDerivative: false,
-    isHeritageGlyph: false,
     cssFontFamily: "'Source Han Sans', 'Noto Sans CJK SC', sans-serif",
     notes:
       "Same glyph project as Noto Sans CJK with different packaging and naming. No web preview CSS is bundled by this catalog.",
@@ -135,8 +145,6 @@ export const catalogFonts: FontRecord[] = [
     author: "Adobe + Google",
     category: "serif",
     isVariable: false,
-    isSourceHanDerivative: false,
-    isHeritageGlyph: false,
     cssFontFamily: "'Source Han Serif', 'Noto Serif CJK SC', serif",
     notes:
       "Same glyph project as Noto Serif CJK with different packaging and naming. No web preview CSS is bundled by this catalog.",
@@ -156,12 +164,13 @@ export const catalogFonts: FontRecord[] = [
     author: "be5invis",
     category: "mono",
     isVariable: false,
-    isSourceHanDerivative: true,
-    isHeritageGlyph: false,
     cssFontFamily: "'Sarasa Gothic', 'Sarasa Mono SC', monospace",
     notes:
       "The project ships many regional and width variants. Choose the package that matches your script and code style needs.",
-    languages: panCjkLanguages,
+    languages: [
+      ...panCjkLanguages,
+      { languageCode: "SOURCE-HAN", coverageLevel: "full" },
+    ],
     tags: ["mono", "programming", "gothic"],
   },
   {
@@ -177,8 +186,6 @@ export const catalogFonts: FontRecord[] = [
     author: "LXGW",
     category: "handwriting",
     isVariable: false,
-    isSourceHanDerivative: false,
-    isHeritageGlyph: false,
     cssFontFamily: "'LXGW WenKai TC', 'LXGW WenKai', cursive",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&display=swap",
@@ -203,8 +210,6 @@ export const catalogFonts: FontRecord[] = [
     author: "Coji Morishita",
     category: "sans",
     isVariable: false,
-    isSourceHanDerivative: false,
-    isHeritageGlyph: false,
     cssFontFamily: "'M PLUS 1p', sans-serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=M+PLUS+1p:wght@400;700&display=swap",
@@ -224,8 +229,6 @@ export const catalogFonts: FontRecord[] = [
     author: "Google",
     category: "sans",
     isVariable: false,
-    isSourceHanDerivative: false,
-    isHeritageGlyph: false,
     cssFontFamily: "'Zen Kaku Gothic New', sans-serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700&display=swap",
@@ -245,8 +248,6 @@ export const catalogFonts: FontRecord[] = [
     author: "Google",
     category: "rounded",
     isVariable: false,
-    isSourceHanDerivative: false,
-    isHeritageGlyph: false,
     cssFontFamily: "'Zen Maru Gothic', sans-serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap",
@@ -266,8 +267,6 @@ export const catalogFonts: FontRecord[] = [
     author: "Google",
     category: "serif",
     isVariable: false,
-    isSourceHanDerivative: false,
-    isHeritageGlyph: false,
     cssFontFamily: "'Shippori Mincho', serif",
     previewCssUrl:
       "https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap",
@@ -288,12 +287,13 @@ export const catalogFonts: FontRecord[] = [
     author: "orioncactus",
     category: "sans",
     isVariable: true,
-    isSourceHanDerivative: true,
-    isHeritageGlyph: false,
     cssFontFamily: "'Pretendard', sans-serif",
     notes:
       "No external preview CSS is loaded by this MVP. Install or self-host Pretendard for production usage.",
-    languages: [{ languageCode: "KR", coverageLevel: "full" }],
+    languages: [
+      { languageCode: "KR", coverageLevel: "full" },
+      { languageCode: "SOURCE-HAN", coverageLevel: "full" },
+    ],
     tags: ["korean", "ui", "variable"],
   },
   {
@@ -309,8 +309,6 @@ export const catalogFonts: FontRecord[] = [
     author: "Naver",
     category: "mono",
     isVariable: false,
-    isSourceHanDerivative: false,
-    isHeritageGlyph: false,
     cssFontFamily: "'D2 Coding', monospace",
     notes:
       "Google Fonts availability can vary; this MVP leaves remote preview CSS disabled unless a verified CSS endpoint is added.",

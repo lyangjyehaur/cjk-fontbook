@@ -11,6 +11,7 @@ const uiFiles = [
   "src/pages/fonts/[slug].astro",
   "src/pages/compare.astro",
   "src/pages/licenses.astro",
+  "src/lib/catalog.ts",
 ];
 
 function readUiSource() {
@@ -26,6 +27,7 @@ describe("Traditional Chinese UI copy", () => {
     expect(source).toContain('label="地區"');
     expect(source).toContain("<span>地區</span>");
     expect(source).toContain("傳承字形");
+    expect(source).toContain("思源系");
     expect(source).toContain("字體目錄");
     expect(source).toContain("顯示 {filteredFonts.length} / {fonts.length} 個字體");
     expect(source).toContain("字體詳情");
@@ -63,5 +65,9 @@ describe("Traditional Chinese UI copy", () => {
 
     expect(filterPanel).not.toContain('label="語言"');
     expect(filterPanel).not.toContain("<span>語言</span>");
+    expect(filterPanel).not.toContain('label="思源系"');
+    expect(filterPanel).not.toContain('label="傳承字形"');
+    expect(filterPanel).toContain("options={LANGUAGE_CODES}");
+    expect(filterPanel).toContain("optionLabels={REGION_LABELS}");
   });
 });

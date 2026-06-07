@@ -2,6 +2,7 @@
 import { Badge } from "../components/Badge";
 import Layout from "../layouts/Layout.astro";
 import { getLicenseGroups } from "../lib/db/queries";
+import { REGION_LABELS } from "../lib/catalog";
 
 const licenseGroups = await getLicenseGroups();
 const categoryLabels: Record<string, string> = {
@@ -44,7 +45,7 @@ const categoryLabels: Record<string, string> = {
                 >
                   <span class="block font-medium">{font.name}</span>
                   <span class="mt-1 block text-sm text-ink-700 dark:text-ink-100">
-                    {categoryLabels[font.category] ?? font.category} · {font.languages.map((language) => language.languageCode).join(", ")}
+                    {categoryLabels[font.category] ?? font.category} · {font.languages.map((language) => REGION_LABELS[language.languageCode]).join(", ")}
                   </span>
                 </a>
               </li>
