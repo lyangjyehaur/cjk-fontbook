@@ -18,7 +18,7 @@ const pageTitle = title === "CJK Fontbook" ? title : `${title} | CJK Fontbook`;
 ---
 
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-theme="winter">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -31,7 +31,7 @@ const pageTitle = title === "CJK Fontbook" ? title : `${title} | CJK Fontbook`;
     <meta property="og:site_name" content="CJK Fontbook" />
     <meta property="og:url" content={Astro.url.href} />
   </head>
-  <body class="font-sans antialiased">
+  <body class="min-h-screen font-sans antialiased">
     <Header />
     <main>
       <slot />

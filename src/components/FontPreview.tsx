@@ -58,48 +58,54 @@ export function FontPreview({
   return (
     <section className="space-y-4">
       {showControls ? (
-        <div className="grid gap-3 rounded-lg border border-ink-200 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5 md:grid-cols-[1fr_auto_auto] md:items-end">
-          <label className="grid gap-1 text-sm font-medium text-ink-700 dark:text-ink-100">
-            預覽文字
-            <input
-              className="min-h-11 rounded-md border border-ink-200 bg-white px-3 text-base text-ink-900 outline-none transition focus:border-vermilion dark:border-white/10 dark:bg-ink-900 dark:text-ink-50"
+        <div className="card border border-base-300 bg-base-100/80 shadow-sm">
+          <div className="card-body grid gap-3 p-4 md:grid-cols-[1fr_auto_auto] md:items-end">
+            <label className="form-control grid gap-1 text-sm font-medium text-base-content/80">
+              預覽文字
+              <textarea
+                className="textarea textarea-bordered min-h-11 resize-none text-base focus:border-vermilion"
+                rows={1}
               value={text}
               onInput={(event) =>
-                setText((event.currentTarget as HTMLInputElement).value)
+                setText((event.currentTarget as HTMLTextAreaElement).value)
               }
-            />
-          </label>
-          <label className="grid min-w-40 gap-1 text-sm font-medium text-ink-700 dark:text-ink-100">
-            字級 {fontSize}px
-            <input
-              type="range"
-              min="24"
-              max="88"
-              value={fontSize}
-              onInput={(event) =>
-                setFontSize(Number((event.currentTarget as HTMLInputElement).value))
-              }
-            />
-          </label>
-          <label className="grid gap-1 text-sm font-medium text-ink-700 dark:text-ink-100">
-            字重
-            <select
-              className="min-h-11 rounded-md border border-ink-200 bg-white px-3 text-base text-ink-900 dark:border-white/10 dark:bg-ink-900 dark:text-ink-50"
-              value={weight}
-              onChange={(event) =>
-                setWeight((event.currentTarget as HTMLSelectElement).value)
-              }
-            >
-              <option value="400">一般</option>
-              <option value="700">粗體</option>
-            </select>
-          </label>
+              />
+            </label>
+            <label className="form-control grid min-w-40 gap-1 text-sm font-medium text-base-content/80">
+              字級 {fontSize}px
+              <input
+                className="range range-primary range-sm"
+                type="range"
+                min="24"
+                max="88"
+                value={fontSize}
+                onInput={(event) =>
+                  setFontSize(
+                    Number((event.currentTarget as HTMLInputElement).value),
+                  )
+                }
+              />
+            </label>
+            <label className="form-control grid gap-1 text-sm font-medium text-base-content/80">
+              字重
+              <select
+                className="select select-bordered min-h-11 text-base focus:border-vermilion"
+                value={weight}
+                onChange={(event) =>
+                  setWeight((event.currentTarget as HTMLSelectElement).value)
+                }
+              >
+                <option value="400">一般</option>
+                <option value="700">粗體</option>
+              </select>
+            </label>
+          </div>
         </div>
       ) : null}
 
       {!loadOnMount && font.previewCssUrl ? (
         <button
-          className="rounded-full border border-ink-200 px-4 py-2 text-sm font-medium text-ink-900 transition hover:border-vermilion hover:text-vermilion dark:border-white/10 dark:text-ink-50"
+          className="btn btn-outline btn-sm border-ink-200 text-ink-900 hover:border-vermilion hover:bg-vermilion dark:border-white/10 dark:text-ink-50"
           type="button"
           onClick={() => {
             loadFontCss(font.previewCssUrl);
@@ -113,20 +119,22 @@ export function FontPreview({
 
       <div
         id={id}
-        className="min-h-32 overflow-hidden rounded-lg border border-ink-200 bg-white p-5 text-ink-900 shadow-sm dark:border-white/10 dark:bg-ink-900 dark:text-ink-50"
+        className="card min-h-32 overflow-hidden border border-base-300 bg-base-100 text-base-content shadow-sm"
       >
-        <p className="break-words transition" style={style}>
-          {text}
-        </p>
-        {!font.previewCssUrl ? (
-          <p className="mt-4 text-sm text-ink-700 dark:text-ink-100">
-            尚未設定遠端預覽 CSS，正在顯示系統備用字體。
+        <div className="card-body p-5">
+          <p className="break-words transition" style={style}>
+            {text}
           </p>
-        ) : !loaded ? (
-          <p className="mt-4 text-sm text-ink-700 dark:text-ink-100">
-            尚未載入遠端字體 CSS。
-          </p>
-        ) : null}
+          {!font.previewCssUrl ? (
+            <p className="mt-4 text-sm text-base-content/70">
+              尚未設定遠端預覽 CSS，正在顯示系統備用字體。
+            </p>
+          ) : !loaded ? (
+            <p className="mt-4 text-sm text-base-content/70">
+              尚未載入遠端字體 CSS。
+            </p>
+          ) : null}
+        </div>
       </div>
     </section>
   );

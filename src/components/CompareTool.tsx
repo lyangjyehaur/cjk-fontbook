@@ -47,76 +47,100 @@ export function CompareTool({ fonts }: CompareToolProps) {
 
   return (
     <section className="grid gap-8 lg:grid-cols-[320px_1fr]">
-      <aside className="space-y-4 rounded-lg border border-ink-200 bg-white/78 p-4 dark:border-white/10 dark:bg-white/[0.06]">
-        <label className="grid gap-2 text-sm font-medium text-ink-700 dark:text-ink-100">
-          預覽文字
-          <input
-            className="min-h-11 rounded-md border border-ink-200 bg-white px-3 text-base text-ink-900 dark:border-white/10 dark:bg-ink-900 dark:text-ink-50"
-            value={previewText}
-            onInput={(event) =>
-              setPreviewText((event.currentTarget as HTMLInputElement).value)
-            }
-          />
-        </label>
-        <label className="grid gap-2 text-sm font-medium text-ink-700 dark:text-ink-100">
-          搜尋字體
-          <input
-            className="min-h-11 rounded-md border border-ink-200 bg-white px-3 text-base text-ink-900 dark:border-white/10 dark:bg-ink-900 dark:text-ink-50"
-            placeholder="篩選選項"
-            value={query}
-            onInput={(event) =>
-              setQuery((event.currentTarget as HTMLInputElement).value)
-            }
-          />
-        </label>
-        <div className="max-h-[520px] space-y-2 overflow-auto pr-1">
-          {visibleOptions.map((font) => (
-            <label
-              className="flex cursor-pointer items-start gap-3 rounded-md border border-transparent p-2 text-sm hover:border-ink-200 hover:bg-white/70 dark:hover:border-white/10 dark:hover:bg-white/5"
-              key={font.slug}
+      <aside className="card border border-base-300 bg-base-100/85 shadow-sm">
+        <div className="card-body space-y-4 p-4">
+          <label className="form-control grid gap-2 text-sm font-medium text-base-content/80">
+            預覽文字
+            <input
+              className="input input-bordered min-h-11 text-base focus:border-vermilion"
+              value={previewText}
+              onInput={(event) =>
+                setPreviewText((event.currentTarget as HTMLInputElement).value)
+              }
+            />
+          </label>
+          <label className="form-control grid gap-2 text-sm font-medium text-base-content/80">
+            搜尋字體
+            <input
+              className="input input-bordered min-h-11 text-base focus:border-vermilion"
+              placeholder="篩選選項"
+              value={query}
+              onInput={(event) =>
+                setQuery((event.currentTarget as HTMLInputElement).value)
+              }
+            />
+          </label>
+          <label className="form-control grid gap-2 text-sm font-medium text-base-content/80">
+            加入字體
+            <select
+              className="select select-bordered min-h-11 text-base focus:border-vermilion"
+              value=""
+              onChange={(event) => {
+                const slug = (event.currentTarget as HTMLSelectElement).value;
+                if (slug && !selectedSlugs.includes(slug)) {
+                  toggleFont(slug);
+                }
+              }}
             >
-              <input
-                checked={selectedSlugs.includes(font.slug)}
-                className="mt-1"
-                type="checkbox"
-                onChange={() => toggleFont(font.slug)}
-              />
-              <span>
-                <span className="block font-medium text-ink-900 dark:text-ink-50">
+              <option value="">選擇字體</option>
+              {visibleOptions.map((font) => (
+                <option key={font.slug} value={font.slug}>
                   {font.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="max-h-[520px] space-y-2 overflow-auto pr-1">
+            {visibleOptions.map((font) => (
+              <label
+                className="flex cursor-pointer items-start gap-3 rounded-field border border-transparent p-2 text-sm hover:border-base-300 hover:bg-base-200/70"
+                key={font.slug}
+              >
+                <input
+                  checked={selectedSlugs.includes(font.slug)}
+                  className="checkbox checkbox-sm checkbox-primary mt-1"
+                  type="checkbox"
+                  onChange={() => toggleFont(font.slug)}
+                />
+                <span>
+                  <span className="block font-medium text-ink-900 dark:text-ink-50">
+                    {font.name}
+                  </span>
+                  <span className="block text-base-content/65">
+                    {categoryLabels[font.category] ?? font.category} · {font.languages.map((language) => GLYPH_LABELS[language.languageCode]).join(", ")}
+                  </span>
                 </span>
-                <span className="block text-ink-700 dark:text-ink-100">
-                  {categoryLabels[font.category] ?? font.category} · {font.languages.map((language) => GLYPH_LABELS[language.languageCode]).join(", ")}
-                </span>
-              </span>
-            </label>
-          ))}
+              </label>
+            ))}
+          </div>
         </div>
       </aside>
 
       <div className="space-y-5">
         {selectedFonts.length > 0 ? (
           selectedFonts.map((font) => (
-            <article className="space-y-3" key={font.slug}>
-              <div>
-                <h2 className="text-xl font-semibold text-ink-900 dark:text-ink-50">
-                  {font.name}
-                </h2>
-                <p className="text-sm text-ink-700 dark:text-ink-100">
-                  {font.displayName ?? font.author}
-                </p>
+            <article className="card border border-base-300 bg-base-100/85 shadow-sm" key={font.slug}>
+              <div className="card-body space-y-3 p-5">
+                <div>
+                  <h2 className="text-xl font-semibold text-ink-900 dark:text-ink-50">
+                    {font.name}
+                  </h2>
+                  <p className="text-sm text-base-content/65">
+                    {font.displayName ?? font.author}
+                  </p>
+                </div>
+                <FontPreview
+                  compact
+                  defaultText={previewText}
+                  font={font}
+                  loadOnMount
+                  showControls={false}
+                />
               </div>
-              <FontPreview
-                compact
-                defaultText={previewText}
-                font={font}
-                loadOnMount
-                showControls={false}
-              />
             </article>
           ))
         ) : (
-          <p className="rounded-lg border border-ink-200 bg-white/70 p-8 text-center text-ink-700 dark:border-white/10 dark:bg-white/5 dark:text-ink-100">
+          <p className="alert justify-center border-base-300 bg-base-100/85 text-center text-base-content/70">
             請至少選擇一款字體進行比較。
           </p>
         )}

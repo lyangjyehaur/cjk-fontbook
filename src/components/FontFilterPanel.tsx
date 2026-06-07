@@ -99,60 +99,62 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
 
   return (
     <section className="space-y-8" aria-labelledby="catalog-heading">
-      <div className="grid gap-4 rounded-lg border border-ink-200 bg-white/78 p-4 shadow-sm dark:border-white/10 dark:bg-white/[0.06] lg:grid-cols-[1fr_1fr]">
-        <label className="grid gap-2 text-sm font-medium text-ink-700 dark:text-ink-100">
-          自訂預覽文字
-          <input
-            className="min-h-12 rounded-md border border-ink-200 bg-white px-4 text-base text-ink-900 outline-none transition focus:border-vermilion dark:border-white/10 dark:bg-ink-900 dark:text-ink-50"
-            value={previewText}
-            onInput={(event) =>
-              setPreviewText((event.currentTarget as HTMLInputElement).value)
-            }
-          />
-        </label>
-        <label className="grid gap-2 text-sm font-medium text-ink-700 dark:text-ink-100">
-          搜尋字體
-          <span className="relative">
-            <Search
-              aria-hidden="true"
-              className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-700 dark:text-ink-100"
-            />
+      <div className="card border border-base-300 bg-base-100/85 shadow-sm">
+        <div className="card-body grid gap-4 p-4 lg:grid-cols-[1fr_1fr]">
+          <label className="form-control grid gap-2 text-sm font-medium text-base-content/80">
+            自訂預覽文字
             <input
-              className="min-h-12 w-full rounded-md border border-ink-200 bg-white py-2 pl-10 pr-4 text-base text-ink-900 outline-none transition focus:border-vermilion dark:border-white/10 dark:bg-ink-900 dark:text-ink-50"
-              placeholder="Noto, WenKai, Gothic..."
-              value={query}
+              className="input input-bordered min-h-12 text-base focus:border-vermilion"
+              value={previewText}
               onInput={(event) =>
-                setQuery((event.currentTarget as HTMLInputElement).value)
+                setPreviewText((event.currentTarget as HTMLInputElement).value)
               }
             />
-          </span>
-        </label>
-        <FilterChips
-          label="字形區別"
-          selectedGlyphs={selectedGlyphs}
-          options={LANGUAGE_CODES}
-          optionLabels={GLYPH_LABELS}
-          onClear={() => setSelectedGlyphs([])}
-          onToggle={toggleGlyph}
-        />
-        <FilterSelect
-          label="分類"
-          value={category}
-          options={CATEGORIES}
-          onChange={(value) => setCategory(value as Category | "all")}
-        />
-        <FilterSelect
-          label="授權"
-          value={license}
-          options={LICENSE_FILTERS}
-          onChange={(value) => setLicense(value as LicenseFilter | "all")}
-        />
-        <FilterSelect
-          label="思源系"
-          value={sourceHan}
-          options={["yes", "no"]}
-          onChange={(value) => setSourceHan(value as "all" | "yes" | "no")}
-        />
+          </label>
+          <label className="form-control grid gap-2 text-sm font-medium text-base-content/80">
+            搜尋字體
+            <span className="relative">
+              <Search
+                aria-hidden="true"
+                className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-base-content/55"
+              />
+              <input
+                className="input input-bordered min-h-12 w-full pl-10 text-base focus:border-vermilion"
+                placeholder="Noto, WenKai, Gothic..."
+                value={query}
+                onInput={(event) =>
+                  setQuery((event.currentTarget as HTMLInputElement).value)
+                }
+              />
+            </span>
+          </label>
+          <FilterChips
+            label="字形區別"
+            selectedGlyphs={selectedGlyphs}
+            options={LANGUAGE_CODES}
+            optionLabels={GLYPH_LABELS}
+            onClear={() => setSelectedGlyphs([])}
+            onToggle={toggleGlyph}
+          />
+          <FilterSelect
+            label="分類"
+            value={category}
+            options={CATEGORIES}
+            onChange={(value) => setCategory(value as Category | "all")}
+          />
+          <FilterSelect
+            label="授權"
+            value={license}
+            options={LICENSE_FILTERS}
+            onChange={(value) => setLicense(value as LicenseFilter | "all")}
+          />
+          <FilterSelect
+            label="思源系"
+            value={sourceHan}
+            options={["yes", "no"]}
+            onChange={(value) => setSourceHan(value as "all" | "yes" | "no")}
+          />
+        </div>
       </div>
 
       <div className="flex items-end justify-between gap-4">
@@ -163,15 +165,18 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           >
             字體目錄
           </h2>
-          <p className="mt-1 text-sm text-ink-700 dark:text-ink-100">
+          <p className="mt-1 text-sm text-base-content/70">
             顯示 {filteredFonts.length} / {fonts.length} 個字體
+            <span className="kbd kbd-sm ml-2 align-middle">
+              {filteredFonts.length}
+            </span>
           </p>
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-ink-200 dark:border-white/10">
+      <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100 shadow-sm">
         {/* Header row */}
-        <div className={`grid min-w-[760px] ${listGridClass} gap-3 bg-ink-100/50 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-ink-700 dark:bg-white/5 dark:text-ink-100`}>
+        <div className={`grid min-w-[760px] ${listGridClass} gap-3 bg-base-200 px-4 py-3 text-xs font-semibold uppercase tracking-wider text-base-content/70`}>
           <span>名稱</span>
           <span>分類</span>
           <span>授權</span>
@@ -184,10 +189,10 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
           return (
             <div
               key={font.slug}
-              className={`border-t border-ink-200 dark:border-white/10 ${
+              className={`border-t border-base-300 ${
                 isExpanded
-                  ? "bg-white dark:bg-white/[0.03]"
-                  : "bg-white/70 hover:bg-white dark:bg-white/[0.02] dark:hover:bg-white/[0.04]"
+                  ? "bg-base-100"
+                  : "bg-base-100/70 hover:bg-base-200/70"
               }`}
             >
               {/* Row */}
@@ -205,7 +210,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
                     {font.name}
                   </a>
                   {font.displayName && font.displayName !== font.name ? (
-                    <p className="mt-0.5 truncate text-sm text-ink-700 dark:text-ink-100">
+                    <p className="mt-0.5 truncate text-sm text-base-content/70">
                       {font.displayName}
                     </p>
                   ) : null}
@@ -228,16 +233,16 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
                 </span>
                 <span className="flex justify-center">
                   {isExpanded ? (
-                    <ChevronDown className="h-4 w-4 text-ink-700 dark:text-ink-100" />
+                    <ChevronDown className="h-4 w-4 text-base-content/60" />
                   ) : (
-                    <ChevronRight className="h-4 w-4 text-ink-700 dark:text-ink-100" />
+                    <ChevronRight className="h-4 w-4 text-base-content/60" />
                   )}
                 </span>
               </button>
 
               {/* Expanded preview */}
               {isExpanded ? (
-                <div className="border-t border-ink-200 px-4 py-5 dark:border-white/10">
+                <div className="border-t border-base-300 px-4 py-5">
                   <FontPreview
                     compact
                     defaultText={previewText}
@@ -252,7 +257,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
         })}
 
         {filteredFonts.length === 0 ? (
-          <p className="px-4 py-8 text-center text-ink-700 dark:text-ink-100">
+          <p className="px-4 py-8 text-center text-base-content/70">
             沒有符合條件的字體。
           </p>
         ) : null}
@@ -287,15 +292,15 @@ function FilterChips({
   onToggle,
 }: FilterChipsProps) {
   return (
-    <fieldset className="grid gap-2 text-sm font-medium text-ink-700 dark:text-ink-100">
+    <fieldset className="form-control grid gap-2 text-sm font-medium text-base-content/80">
       <legend>{label}</legend>
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
-          className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+          className={`btn btn-sm rounded-full ${
             selectedGlyphs.length === 0
-              ? "border-vermilion bg-vermilion text-white"
-              : "border-ink-200 bg-white text-ink-700 hover:border-vermilion hover:text-vermilion dark:border-white/10 dark:bg-ink-900 dark:text-ink-100"
+              ? "btn-active bg-vermilion text-white hover:bg-vermilion"
+              : "btn-outline border-base-300 hover:border-vermilion hover:bg-vermilion"
           }`}
           aria-pressed={selectedGlyphs.length === 0}
           onClick={onClear}
@@ -309,10 +314,10 @@ function FilterChips({
             <button
               type="button"
               key={option}
-              className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+              className={`btn btn-sm rounded-full ${
                 selected
-                  ? "border-vermilion bg-vermilion text-white"
-                  : "border-ink-200 bg-white text-ink-700 hover:border-vermilion hover:text-vermilion dark:border-white/10 dark:bg-ink-900 dark:text-ink-100"
+                  ? "btn-active bg-vermilion text-white hover:bg-vermilion"
+                  : "btn-outline border-base-300 hover:border-vermilion hover:bg-vermilion"
               }`}
               aria-pressed={selectedGlyphs.includes(option)}
               onClick={() => onToggle(option)}
@@ -334,10 +339,10 @@ function FilterSelect({
   onChange,
 }: FilterSelectProps) {
   return (
-    <label className="grid gap-2 text-sm font-medium text-ink-700 dark:text-ink-100">
+    <label className="form-control grid gap-2 text-sm font-medium text-base-content/80">
       {label}
       <select
-        className="min-h-12 rounded-md border border-ink-200 bg-white px-4 text-base text-ink-900 outline-none transition focus:border-vermilion dark:border-white/10 dark:bg-ink-900 dark:text-ink-50"
+        className="select select-bordered min-h-12 text-base focus:border-vermilion"
         value={value}
         onChange={(event) =>
           onChange((event.currentTarget as HTMLSelectElement).value)

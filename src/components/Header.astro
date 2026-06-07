@@ -6,15 +6,17 @@ const navItems = [
 ];
 ---
 
-<header class="border-b border-ink-200/80 bg-ink-50/80 backdrop-blur dark:border-white/10 dark:bg-ink-900/80">
-  <nav class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8" aria-label="主要導覽">
-    <a class="text-base font-semibold text-ink-900 dark:text-ink-50" href="/">
+<header class="border-b border-base-300/80 bg-base-100/90 backdrop-blur">
+  <nav class="navbar mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="主要導覽">
+    <div class="flex-1">
+      <a class="btn btn-ghost px-2 text-base font-semibold text-ink-900 hover:text-vermilion dark:text-ink-50" href="/">
       CJK Fontbook
-    </a>
-    <div class="flex items-center gap-1">
+      </a>
+    </div>
+    <div class="flex-none">
       {navItems.map((item) => (
         <a
-          class="rounded-full px-3 py-2 text-sm font-medium text-ink-700 transition hover:bg-white hover:text-vermilion dark:text-ink-100 dark:hover:bg-white/10"
+          class="btn btn-ghost btn-sm text-ink-700 hover:text-vermilion dark:text-ink-100"
           href={item.href}
         >
           {item.label}
