@@ -55,110 +55,119 @@ const coverageLabels: Record<string, string> = {
 ---
 
 <Layout title={font.name} description={description} ogType="article">
-  <article>
-    <section class="hero bg-base-100">
-      <div class="hero-content container mx-auto grid gap-8 px-4 py-12 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <div>
-          <p class="text-sm font-semibold text-primary">字體詳情</p>
-          <h1 class="mt-4 text-5xl font-semibold tracking-normal">
-            {font.name}
-          </h1>
+  <article class="px-4 py-8">
+    <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_18rem]">
+      <div class="min-w-0">
+        <a class="link-hover text-sm text-base-content/60" href="/">
+          返回目錄
+        </a>
+        <header class="mt-4">
+          <p class="text-sm font-semibold text-vermilion">字體詳情</p>
+          <h1 class="mt-2 text-3xl font-semibold">{font.name}</h1>
           {font.displayName && font.displayName !== font.name ? (
-            <p class="mt-3 text-2xl text-base-content/70">
-              {font.displayName}
-            </p>
+            <p class="mt-2 text-lg text-base-content/65">{font.displayName}</p>
           ) : null}
-          <p class="mt-5 max-w-3xl text-lg leading-8 text-base-content/70">
+          <p class="mt-4 max-w-3xl leading-7 text-base-content/70">
             {description}
           </p>
-        </div>
-        <aside class="card border border-base-300 bg-base-200 shadow-sm">
-          <div class="card-body gap-4">
-            <h2 class="card-title text-lg">中繼資料</h2>
-            <div class="stats stats-vertical bg-base-100 shadow-none">
-              <div class="stat px-4 py-3">
-                <div class="stat-title">授權</div>
-                <div class="stat-value text-lg">{font.license}</div>
-              </div>
-              <div class="stat px-4 py-3">
-                <div class="stat-title">作者</div>
-                <div class="stat-value text-lg">{font.author ?? "未知"}</div>
-              </div>
-              <div class="stat px-4 py-3">
-                <div class="stat-title">可變字重</div>
-                <div class="stat-value text-lg">{font.isVariable ? "是" : "否"}</div>
-              </div>
-            </div>
-          </div>
-        </aside>
+        </header>
+
+        <section class="mt-6" aria-labelledby="preview-heading">
+          <h2 id="preview-heading" class="sr-only">預覽</h2>
+          <FontPreview client:load font={font} loadOnMount showDetailLink={false} />
+        </section>
       </div>
-    </section>
 
-    <div class="container mx-auto px-4 py-8">
-    <section class="flex flex-wrap gap-2" aria-label="字體中繼資料">
-      <Badge tone="category">{categoryLabels[font.category] ?? font.category}</Badge>
-      <Badge tone="license">{font.license}</Badge>
-      {font.languages.map((language) => (
-        <Badge tone="language">{GLYPH_LABELS[language.languageCode]} {coverageLabels[language.coverageLevel] ?? language.coverageLevel}</Badge>
-      ))}
-      {font.isSourceHanDerivative ? (
-        <Badge tone="language">思源系</Badge>
-      ) : null}
-      {font.tags.map((tag) => (
-        <Badge>{tag}</Badge>
-      ))}
-    </section>
+      <aside class="border border-base-300 bg-base-100 p-4 xl:sticky xl:top-20 xl:self-start">
+        <h2 class="text-sm font-semibold">中繼資料</h2>
+        <dl class="mt-4 grid gap-3 text-sm">
+          <div>
+            <dt class="text-base-content/55">分類</dt>
+            <dd class="mt-1">
+              <Badge tone="category">{categoryLabels[font.category] ?? font.category}</Badge>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-base-content/55">授權</dt>
+            <dd class="mt-1">
+              <Badge tone="license">{font.license}</Badge>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-base-content/55">作者</dt>
+            <dd class="mt-1">{font.author ?? "未知"}</dd>
+          </div>
+          <div>
+            <dt class="text-base-content/55">可變字重</dt>
+            <dd class="mt-1">{font.isVariable ? "是" : "否"}</dd>
+          </div>
+          <div>
+            <dt class="text-base-content/55">思源系</dt>
+            <dd class="mt-1">{font.isSourceHanDerivative ? "是" : "否"}</dd>
+          </div>
+        </dl>
+      </aside>
+    </div>
 
-    <section class="mt-10" aria-labelledby="preview-heading">
-      <h2 id="preview-heading" class="mb-4 text-2xl font-semibold">
-        預覽
-      </h2>
-      <FontPreview client:load font={font} loadOnMount showDetailLink={false} />
-    </section>
+    <div class="divider my-8"></div>
 
-    <section class="mt-10 grid gap-6 lg:grid-cols-2">
-      <div class="card border border-base-300 bg-base-100 shadow-sm">
+    <section class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div class="card card-border bg-base-100">
         <div class="card-body">
-        <h2 class="card-title text-xl">
-          連結
-        </h2>
-        {links.length > 0 ? (
-          <div class="mt-2 grid gap-2">
-            {links.map((link) => (
-              <a class="btn btn-outline justify-start" href={link.href}>
-                <span class="font-medium">{link.label}</span>
-                <span class="truncate text-xs font-normal opacity-65">{link.href}</span>
-              </a>
+          <h2 class="card-title text-lg">字形與標籤</h2>
+          <div class="flex flex-wrap gap-2">
+            {font.languages.map((language) => (
+              <Badge tone="language">
+                {GLYPH_LABELS[language.languageCode]} {coverageLabels[language.coverageLevel] ?? language.coverageLevel}
+              </Badge>
+            ))}
+            {font.isSourceHanDerivative ? <Badge tone="accent">思源系</Badge> : null}
+            {font.tags.map((tag) => (
+              <Badge>{tag}</Badge>
             ))}
           </div>
-        ) : (
-          <p class="text-sm text-base-content/60">尚未提供外部連結。</p>
-        )}
         </div>
       </div>
 
-      <div class="card border border-base-300 bg-base-100 shadow-sm">
+      <div class="card card-border bg-base-100">
         <div class="card-body">
-        <h2 class="card-title text-xl">
-          CSS 用法
-        </h2>
-        <div class="mockup-code mt-2 text-sm">
-          {cssUsage.map((line, index) => (
-            <pre data-prefix={line ? index + 1 : ""}><code>{line}</code></pre>
-          ))}
-        </div>
+          <h2 class="card-title text-lg">連結</h2>
+          {links.length > 0 ? (
+            <div class="grid gap-2">
+              {links.map((link) => (
+                <a class="btn btn-outline btn-sm justify-start" href={link.href}>
+                  <span class="shrink-0 font-medium">{link.label}</span>
+                  <span class="truncate text-xs font-normal opacity-65">{link.href}</span>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p class="text-sm text-base-content/60">尚未提供外部連結。</p>
+          )}
         </div>
       </div>
     </section>
 
-    {font.notes ? (
-      <section class="alert alert-info mt-6">
-        <div>
-          <h2 class="font-semibold">注意事項</h2>
-          <p class="mt-1 leading-7">{font.notes}</p>
+    <section class="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div class="card card-border bg-base-100">
+        <div class="card-body">
+          <h2 class="card-title text-lg">CSS 用法</h2>
+          <div class="mockup-code text-sm">
+            {cssUsage.map((line, index) => (
+              <pre data-prefix={line ? index + 1 : ""}><code>{line}</code></pre>
+            ))}
+          </div>
         </div>
-      </section>
-    ) : null}
-    </div>
+      </div>
+
+      <div class="card card-border bg-base-100">
+        <div class="card-body">
+          <h2 class="card-title text-lg">注意事項</h2>
+          <p class="leading-7 text-base-content/70">
+            {font.notes ?? "此目錄只保存索引與預覽資訊。正式導入專案前，請確認上游專案的版本、字形套件與授權文字。"}
+          </p>
+        </div>
+      </div>
+    </section>
   </article>
 </Layout>

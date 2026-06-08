@@ -11,7 +11,7 @@ interface Props {
 
 const {
   title = "CJK Fontbook",
-  description = "探索開源中文字體、日文字體與韓文字體。",
+  description = "探索、篩選、預覽與比較開源中日韓字體。",
   ogType = "website",
 } = Astro.props;
 const pageTitle = title === "CJK Fontbook" ? title : `${title} | CJK Fontbook`;
@@ -41,9 +41,9 @@ const pageTitle = title === "CJK Fontbook" ? title : `${title} | CJK Fontbook`;
         .addEventListener("change", applyTheme);
     </script>
   </head>
-  <body class="min-h-screen bg-base-200 font-sans text-base-content antialiased">
+  <body class="min-h-screen bg-base-100 font-sans text-base-content antialiased">
     <Header />
-    <main class="min-h-[calc(100vh-9rem)]">
+    <main class="min-h-[calc(100vh-7rem)]">
       <slot />
     </main>
     <Footer />

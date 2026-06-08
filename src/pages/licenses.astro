@@ -19,39 +19,67 @@ const categoryLabels: Record<string, string> = {
   title="授權條款"
   description="CJK Fontbook 目錄中收錄字體的開源授權。"
 >
-  <section class="container mx-auto max-w-5xl px-4 py-10">
-    <p class="text-sm font-semibold text-primary">授權索引</p>
-    <h1 class="mt-3 text-4xl font-semibold">
-      授權條款
-    </h1>
-    <p class="mt-3 max-w-2xl text-base-content/70">
-      授權摘要僅作為目錄索引，不構成法律建議。正式使用字體前，請務必檢閱上游字體專案。
-    </p>
+  <section class="px-4 py-8">
+    <div class="max-w-3xl">
+      <p class="text-sm font-semibold text-vermilion">參考資料</p>
+      <h1 class="mt-2 text-3xl font-semibold">授權條款</h1>
+      <p class="mt-3 leading-7 text-base-content/70">
+        依授權分組檢視目錄字體。此頁是索引摘要，不構成法律建議；正式使用前請檢閱上游專案。
+      </p>
+    </div>
 
-    <div class="mt-8 space-y-4">
+    <div class="mt-6 grid gap-4">
       {licenseGroups.map((group, index) => (
-        <div class="collapse collapse-arrow border border-base-300 bg-base-100 shadow-sm">
+        <div class="collapse collapse-arrow border border-base-300 bg-base-100">
           <input type="checkbox" checked={index === 0} />
-          <div class="collapse-title flex flex-wrap items-center gap-3 text-xl font-semibold">
+          <div class="collapse-title flex flex-wrap items-center gap-3 text-lg font-semibold">
             <span>{group.license}</span>
             <Badge tone="license">{group.fonts.length} 個字體</Badge>
           </div>
           <div class="collapse-content">
-            <ul class="grid gap-3 pt-2 sm:grid-cols-2">
-              {group.fonts.map((font) => (
-                <li>
-                  <a
-                    class="block rounded-box border border-base-300 bg-base-200 p-4 transition hover:border-primary hover:bg-base-100"
-                    href={`/fonts/${font.slug}/`}
-                  >
-                    <span class="block font-medium">{font.name}</span>
-                    <span class="mt-1 block text-sm text-base-content/60">
-                      {categoryLabels[font.category] ?? font.category} · {font.languages.map((language) => GLYPH_LABELS[language.languageCode]).join(", ")}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <div class="overflow-x-auto border border-base-300">
+              <table class="table table-sm min-w-[760px]">
+                <thead>
+                  <tr>
+                    <th>字體</th>
+                    <th>分類</th>
+                    <th>字形區別</th>
+                    <th>作者</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {group.fonts.map((font) => (
+                    <tr class="hover:bg-base-200">
+                      <td>
+                        <a class="font-semibold hover:text-vermilion" href={`/fonts/${font.slug}/`}>
+                          {font.name}
+                        </a>
+                        {font.displayName && font.displayName !== font.name ? (
+                          <p class="mt-0.5 text-sm text-base-content/60">
+                            {font.displayName}
+                          </p>
+                        ) : null}
+                      </td>
+                      <td>
+                        <Badge tone="category">
+                          {categoryLabels[font.category] ?? font.category}
+                        </Badge>
+                      </td>
+                      <td>
+                        <div class="flex flex-wrap gap-1.5">
+                          {font.languages.map((language) => (
+                            <Badge tone="language">
+                              {GLYPH_LABELS[language.languageCode]}
+                            </Badge>
+                          ))}
+                        </div>
+                      </td>
+                      <td class="text-base-content/70">{font.author ?? "未知"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       ))}

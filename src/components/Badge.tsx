@@ -5,6 +5,7 @@ type BadgeTone =
   | "category"
   | "license"
   | "coverage"
+  | "accent"
   | "neutral";
 
 interface BadgeProps {
@@ -17,6 +18,7 @@ const toneClass: Record<BadgeTone, string> = {
   category: "badge-primary badge-outline",
   license: "badge-neutral badge-outline",
   coverage: "badge-info badge-outline",
+  accent: "badge-outline border-vermilion text-vermilion",
   neutral: "badge-ghost",
 };
 

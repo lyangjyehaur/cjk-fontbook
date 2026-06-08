@@ -1,5 +1,5 @@
 import { Fragment } from "preact";
-import { ChevronDown, ChevronRight, Search } from "lucide-preact";
+import { ChevronDown, ChevronRight, RotateCcw, Search } from "lucide-preact";
 import { useMemo, useState } from "preact/hooks";
 import type { Category, FontRecord, LanguageCode } from "../lib/catalog";
 import {
@@ -10,6 +10,7 @@ import {
   LICENSE_FILTERS,
   type LicenseFilter,
 } from "../lib/catalog";
+import { Badge } from "./Badge";
 import { FontPreview } from "./FontPreview";
 
 interface FontFilterPanelProps {
@@ -57,7 +58,7 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
     return fonts.filter((font) => {
       const matchesQuery =
         !normalizedQuery ||
-        [font.name, font.displayName, font.author, ...font.tags]
+        [font.name, font.displayName, font.author, font.license, ...font.tags]
           .filter(Boolean)
           .some((value) => value!.toLowerCase().includes(normalizedQuery));
       const matchesGlyphs =
@@ -86,6 +87,8 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
   }, [category, fonts, license, query, selectedGlyphs, sourceHan]);
 
   const totalPages = Math.max(1, Math.ceil(filteredFonts.length / PAGE_SIZE));
+  const pageStart = (currentPage - 1) * PAGE_SIZE;
+  const pagedFonts = filteredFonts.slice(pageStart, pageStart + PAGE_SIZE);
   const visiblePageItems = useMemo<(number | "ellipsis")[]>(() => {
     const pageNumbers = new Set(
       [1, currentPage - 1, currentPage, currentPage + 1, totalPages].filter(
@@ -96,19 +99,23 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
 
     return sortedPageNumbers.flatMap((page, index) => {
       const previousPage = sortedPageNumbers[index - 1];
-
-      if (previousPage !== undefined && page - previousPage > 1) {
-        return ["ellipsis", page];
-      }
-
-      return [page];
+      return previousPage !== undefined && page - previousPage > 1
+        ? ["ellipsis", page]
+        : [page];
     });
   }, [currentPage, totalPages]);
-  const pageStart = (currentPage - 1) * PAGE_SIZE;
-  const pagedFonts = filteredFonts.slice(pageStart, pageStart + PAGE_SIZE);
-  const pagedFontSlugs = new Set(pagedFonts.map((font) => font.slug));
 
   function resetPage() {
+    setCurrentPage(1);
+  }
+
+  function resetFilters() {
+    setQuery("");
+    setSelectedGlyphs([]);
+    setCategory("all");
+    setLicense("all");
+    setSourceHan("all");
+    setExpandedSlug(null);
     setCurrentPage(1);
   }
 
@@ -121,25 +128,36 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
     );
   }
 
-  function toggleExpand(slug: string) {
-    setExpandedSlug((current) => (current === slug ? null : slug));
-  }
-
   return (
-    <section className="space-y-6" aria-labelledby="catalog-heading">
-      <div className="card border border-base-300 bg-base-100 shadow-sm">
-        <div className="card-body gap-0 p-5 sm:p-6">
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+    <section
+      className="grid gap-6 lg:grid-cols-[17rem_minmax(0,1fr)]"
+      aria-labelledby="catalog-heading"
+    >
+      <aside className="lg:sticky lg:top-20 lg:self-start" aria-label="字體篩選">
+        <div className="border border-base-300 bg-base-100 p-4">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-sm font-semibold">篩選</h2>
+            <button
+              type="button"
+              className="btn btn-ghost btn-xs"
+              onClick={resetFilters}
+            >
+              <RotateCcw aria-hidden="true" className="h-3.5 w-3.5" />
+              重設
+            </button>
+          </div>
+
+          <div className="mt-4 grid gap-4">
             <label className="form-control grid gap-2 text-sm font-medium">
-              搜尋字體
+              搜尋
               <span className="relative">
                 <Search
                   aria-hidden="true"
                   className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-base-content/45"
                 />
                 <input
-                  className="input input-bordered w-full pl-10"
-                  placeholder="Noto, WenKai, Gothic..."
+                  className="input input-sm w-full pl-10"
+                  placeholder="名稱、作者、標籤"
                   value={query}
                   onInput={(event) => {
                     resetPage();
@@ -150,33 +168,18 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
             </label>
 
             <label className="form-control grid gap-2 text-sm font-medium">
-              自訂預覽文字
-              <input
-                className="input input-bordered w-full"
+              預覽文字
+              <textarea
+                className="textarea textarea-sm min-h-28 resize-y"
                 value={previewText}
                 onInput={(event) =>
                   setPreviewText(
-                    (event.currentTarget as HTMLInputElement).value,
+                    (event.currentTarget as HTMLTextAreaElement).value,
                   )
                 }
               />
             </label>
-          </div>
 
-          <div className="divider my-5">篩選條件</div>
-
-          <div className="grid gap-5 xl:grid-cols-[minmax(18rem,1.5fr)_repeat(3,minmax(9rem,1fr))]">
-            <FilterChips
-              label="字形區別"
-              selectedGlyphs={selectedGlyphs}
-              options={LANGUAGE_CODES}
-              optionLabels={GLYPH_LABELS}
-              onClear={() => {
-                resetPage();
-                setSelectedGlyphs([]);
-              }}
-              onToggle={toggleGlyph}
-            />
             <FilterSelect
               label="分類"
               value={category}
@@ -204,182 +207,195 @@ export function FontFilterPanel({ fonts }: FontFilterPanelProps) {
                 setSourceHan(value as "all" | "yes" | "no");
               }}
             />
-          </div>
 
-          <div className="divider my-5"></div>
-
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 id="catalog-heading" className="text-2xl font-semibold">
-                字體目錄
-              </h2>
-              <p className="mt-1 text-sm text-base-content/65">
-                顯示 {pagedFonts.length} / {filteredFonts.length} 個字體
-              </p>
-            </div>
-            <div className="stats stats-horizontal border border-base-300 bg-base-100 shadow-none">
-              <div className="stat px-4 py-2">
-                <div className="stat-title text-xs">目前結果</div>
-                <div className="stat-value text-2xl">{filteredFonts.length}</div>
-              </div>
-            </div>
+              <FilterChips
+                label="字形區別"
+                selectedGlyphs={selectedGlyphs}
+                options={LANGUAGE_CODES}
+                optionLabels={GLYPH_LABELS}
+                onClear={() => {
+                  resetPage();
+                  setSelectedGlyphs([]);
+                }}
+                onToggle={toggleGlyph}
+              />
           </div>
         </div>
-      </div>
+      </aside>
 
-      <div className="overflow-x-auto rounded-box border border-base-300 bg-base-100 shadow-sm">
-        <table className="table table-zebra table-pin-rows min-w-[860px]">
-          <thead>
-            <tr>
-              <th>名稱</th>
-              <th>分類</th>
-              <th>授權</th>
-              <th><span>字形區別</span></th>
-              <th>思源系</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredFonts.map((font) => {
-              const isExpanded = expandedSlug === font.slug;
-              const isCurrentPageFont = pagedFontSlugs.has(font.slug);
+      <div className="min-w-0">
+        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 id="catalog-heading" className="text-lg font-semibold">
+              字體目錄
+            </h2>
+            <p className="mt-1 text-sm text-base-content/65">
+              顯示 {pagedFonts.length} / {filteredFonts.length}，總計 {fonts.length} 款
+            </p>
+          </div>
+          <p className="text-sm text-base-content/65">
+            點開列首按鈕查看同列預覽。
+          </p>
+        </div>
 
-              return (
-                <Fragment key={font.slug}>
-                  <tr
-                    className={`cursor-pointer transition hover:bg-base-200 ${isCurrentPageFont ? "" : "hidden"}`}
-                    onClick={() => toggleExpand(font.slug)}
-                    aria-expanded={isExpanded}
-                  >
-                    <td>
-                      <div className="flex items-center gap-3">
-                        {isExpanded ? (
-                          <ChevronDown
-                            aria-hidden="true"
-                            className="h-4 w-4 shrink-0 text-base-content/50"
-                          />
-                        ) : (
-                          <ChevronRight
-                            aria-hidden="true"
-                            className="h-4 w-4 shrink-0 text-base-content/50"
-                          />
-                        )}
-                        <div className="min-w-0">
-                          <a
-                            className="font-semibold hover:text-primary"
-                            href={`/fonts/${font.slug}/`}
-                            onClick={(event) => event.stopPropagation()}
-                          >
-                            {font.name}
-                          </a>
-                          {font.displayName && font.displayName !== font.name ? (
-                            <p className="mt-0.5 max-w-xs truncate text-sm text-base-content/60">
-                              {font.displayName}
-                            </p>
-                          ) : null}
+        <div className="overflow-x-auto border border-base-300 bg-base-100">
+          <table className="table table-sm min-w-[920px]">
+            <thead>
+              <tr>
+                <th className="w-10"></th>
+                <th>名稱</th>
+                <th>分類</th>
+                <th>授權</th>
+                <th><span>字形區別</span></th>
+                <th>作者</th>
+                <th>思源系</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pagedFonts.map((font) => {
+                const isExpanded = expandedSlug === font.slug;
+
+                return (
+                  <Fragment key={font.slug}>
+                    <tr className="align-top hover:bg-base-200">
+                      <td>
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs btn-square"
+                          aria-label={`${isExpanded ? "收合" : "展開"} ${font.name} 預覽`}
+                          aria-expanded={isExpanded}
+                          onClick={() =>
+                            setExpandedSlug(isExpanded ? null : font.slug)
+                          }
+                        >
+                          {isExpanded ? (
+                            <ChevronDown aria-hidden="true" className="h-4 w-4" />
+                          ) : (
+                            <ChevronRight aria-hidden="true" className="h-4 w-4" />
+                          )}
+                        </button>
+                      </td>
+                      <td>
+                        <a
+                          className="font-semibold hover:text-vermilion focus:text-vermilion"
+                          href={`/fonts/${font.slug}/`}
+                        >
+                          {font.name}
+                        </a>
+                        {font.displayName && font.displayName !== font.name ? (
+                          <p className="mt-0.5 max-w-sm truncate text-sm text-base-content/60">
+                            {font.displayName}
+                          </p>
+                        ) : null}
+                      </td>
+                      <td>
+                        <Badge tone="category">
+                          {optionLabels[font.category] ?? font.category}
+                        </Badge>
+                      </td>
+                      <td>
+                        <Badge tone="license">{font.license}</Badge>
+                      </td>
+                      <td>
+                        <div className="flex flex-wrap gap-1.5">
+                          {font.languages.map((lang) => (
+                            <Badge tone="language" key={lang.languageCode}>
+                              {GLYPH_LABELS[lang.languageCode]}
+                            </Badge>
+                          ))}
                         </div>
-                      </div>
-                    </td>
-                    <td>
-                      <span className="badge badge-primary badge-outline">
-                        {optionLabels[font.category] ?? font.category}
-                      </span>
-                    </td>
-                    <td>
-                      <span className="badge badge-ghost badge-sm">
-                        {font.license}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="flex flex-wrap gap-1.5">
-                        {font.languages.map((lang) => (
-                          <span
-                            className="badge badge-sm badge-outline"
-                            key={lang.languageCode}
-                          >
-                            {GLYPH_LABELS[lang.languageCode]}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td>
-                      {font.isSourceHanDerivative ? (
-                        <span className="badge badge-accent badge-sm">
-                          思源系
-                        </span>
-                      ) : (
-                        <span className="text-base-content/35">-</span>
-                      )}
-                    </td>
-                  </tr>
-                  {isExpanded ? (
-                    <tr className={isCurrentPageFont ? "" : "hidden"}>
-                      <td colSpan={5} className="bg-base-100 p-4">
-                        <FontPreview
-                          compact
-                          defaultText={previewText}
-                          font={font}
-                          loadOnMount={true}
-                          showControls={true}
-                        />
+                      </td>
+                      <td className="text-base-content/70">
+                        {font.author ?? "未知"}
+                      </td>
+                      <td>
+                        {font.isSourceHanDerivative ? (
+                          <Badge tone="accent">是</Badge>
+                        ) : (
+                          <span className="text-base-content/35">否</span>
+                        )}
                       </td>
                     </tr>
-                  ) : null}
-                </Fragment>
-              );
-            })}
+                    {isExpanded ? (
+                      <tr>
+                        <td colSpan={7} className="bg-base-100 p-0">
+                          <div className="collapse collapse-open">
+                            <div className="collapse-content p-4">
+                              <FontPreview
+                                compact
+                                defaultText={previewText}
+                                font={font}
+                                loadOnMount={false}
+                                showControls={false}
+                                surface="plain"
+                              />
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : null}
+                  </Fragment>
+                );
+              })}
 
-            {filteredFonts.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="py-10 text-center text-base-content/60">
-                  沒有符合條件的字體。
-                </td>
-              </tr>
-            ) : null}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex flex-wrap items-center justify-center gap-2">
-          <button
-            type="button"
-            className="btn btn-sm btn-outline"
-            aria-label="上一頁"
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage(currentPage - 1)}
-          >
-            «
-          </button>
-          {visiblePageItems.map((item, index) =>
-            item === "ellipsis" ? (
-              <span
-                key={`ellipsis-${index}`}
-                className="btn btn-sm btn-disabled"
-              >
-                ...
-              </span>
-            ) : (
-              <button
-                key={item}
-                type="button"
-                className={`btn btn-sm ${item === currentPage ? "btn-primary" : "btn-outline"}`}
-                aria-current={item === currentPage ? "page" : undefined}
-                aria-label={`前往第 ${item} 頁`}
-                onClick={() => setCurrentPage(item)}
-              >
-                {item}
-              </button>
-            ),
-          )}
-          <button
-            type="button"
-            className="btn btn-sm btn-outline"
-            aria-label="下一頁"
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage(currentPage + 1)}
-          >
-            »
-          </button>
+              {pagedFonts.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="py-12 text-center text-base-content/60">
+                    沒有符合條件的字體。
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
         </div>
+
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-base-content/60">
+            第 {currentPage} / {totalPages} 頁
+          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              className="btn btn-sm btn-outline"
+              aria-label="上一頁"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(currentPage - 1)}
+            >
+              上一頁
+            </button>
+            {visiblePageItems.map((item, index) =>
+              item === "ellipsis" ? (
+                <span
+                  key={`ellipsis-${index}`}
+                  className="btn btn-sm btn-disabled"
+                >
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={item}
+                  type="button"
+                  className={`btn btn-sm ${item === currentPage ? "border-vermilion bg-vermilion text-white hover:border-vermilion hover:bg-vermilion/90" : "btn-outline"}`}
+                  aria-current={item === currentPage ? "page" : undefined}
+                  aria-label={`前往第 ${item} 頁`}
+                  onClick={() => setCurrentPage(item)}
+                >
+                  {item}
+                </button>
+              ),
+            )}
+            <button
+              type="button"
+              className="btn btn-sm btn-outline"
+              aria-label="下一頁"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(currentPage + 1)}
+            >
+              下一頁
+            </button>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
@@ -411,13 +427,13 @@ function FilterChips({
   return (
     <fieldset className="form-control grid gap-2 text-sm font-medium">
       <legend>{label}</legend>
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="grid gap-1.5">
         {options.map((option) => {
           const checked = selectedGlyphs.includes(option);
           return (
             <label
               key={option}
-              className={`btn btn-sm cursor-pointer ${checked ? "btn-active" : "btn-outline"}`}
+              className={`btn btn-sm justify-start ${checked ? "border-vermilion bg-vermilion text-white hover:border-vermilion hover:bg-vermilion/90" : "btn-outline"}`}
             >
               <input
                 type="checkbox"
@@ -430,15 +446,11 @@ function FilterChips({
             </label>
           );
         })}
-        {selectedGlyphs.length > 0 && (
-          <button
-            type="reset"
-            className="btn btn-sm btn-ghost"
-            onClick={onClear}
-          >
-            × 清除篩選
+        {selectedGlyphs.length > 0 ? (
+          <button type="reset" className="btn btn-ghost btn-sm justify-start" onClick={onClear}>
+            清除篩選
           </button>
-        )}
+        ) : null}
       </div>
     </fieldset>
   );
@@ -449,7 +461,7 @@ function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
     <label className="form-control grid gap-2 text-sm font-medium">
       {label}
       <select
-        className="select select-bordered select-sm"
+        className="select select-sm w-full"
         value={value}
         onChange={(event) =>
           onChange((event.currentTarget as HTMLSelectElement).value)

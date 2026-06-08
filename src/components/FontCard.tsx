@@ -18,28 +18,23 @@ const categoryLabels: Record<string, string> = {
 
 export function FontCard({ font, previewText }: FontCardProps) {
   return (
-    <article className="card h-full border border-base-300 bg-base-100/85 shadow-sm transition hover:-translate-y-0.5 hover:border-vermilion/40 hover:shadow-md">
-      <div className="card-body gap-5 p-5">
-        <div className="space-y-3">
-          <div>
-            <a
-              className="card-title text-xl font-semibold text-ink-900 hover:text-vermilion dark:text-ink-50"
-              href={`/fonts/${font.slug}/`}
-            >
-              {font.name}
-            </a>
-            {font.displayName && font.displayName !== font.name ? (
-              <p className="mt-1 text-sm text-base-content/70">
-                {font.displayName}
-              </p>
-            ) : null}
-          </div>
-          <p className="line-clamp-3 text-sm leading-6 text-base-content/70">
-            {font.description}
-          </p>
+    <article className="card card-border h-full bg-base-100">
+      <div className="card-body gap-4 p-4">
+        <div className="min-w-0">
+          <a
+            className="card-title text-lg font-semibold hover:text-vermilion"
+            href={`/fonts/${font.slug}/`}
+          >
+            {font.name}
+          </a>
+          {font.displayName && font.displayName !== font.name ? (
+            <p className="mt-1 truncate text-sm text-base-content/60">
+              {font.displayName}
+            </p>
+          ) : null}
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           <Badge tone="category">{categoryLabels[font.category] ?? font.category}</Badge>
           <Badge tone="license">{font.license}</Badge>
           {font.languages.map((language) => (
@@ -47,20 +42,17 @@ export function FontCard({ font, previewText }: FontCardProps) {
               {GLYPH_LABELS[language.languageCode]}
             </Badge>
           ))}
-          {font.isSourceHanDerivative ? (
-            <Badge tone="language">思源系</Badge>
-          ) : null}
         </div>
 
-        <div className="mt-auto">
-          <FontPreview
-            compact
-            defaultText={previewText}
-            font={font}
-            loadOnMount={false}
-            showControls={false}
-          />
-        </div>
+        <FontPreview
+          compact
+          defaultText={previewText}
+          font={font}
+          loadOnMount={false}
+          showControls={false}
+          showDetailLink={false}
+          surface="plain"
+        />
       </div>
     </article>
   );
