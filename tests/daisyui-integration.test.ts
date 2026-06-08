@@ -31,7 +31,7 @@ describe("DaisyUI integration", () => {
     for (const className of [
       "hero",
       "card",
-      "divider",
+      "join",
       "btn",
       "btn-sm",
       "btn-outline",

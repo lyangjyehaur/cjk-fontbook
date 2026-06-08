@@ -15,7 +15,7 @@ describe("catalog queries", () => {
   it("returns the seeded catalog fonts", async () => {
     const fonts = await getAllFonts();
 
-    expect(fonts).toHaveLength(70);
+    expect(fonts).toHaveLength(110);
     expect(fonts.map((font) => font.slug)).toContain("lxgw-wenkai");
     expect(fonts.map((font) => font.slug)).toContain("fancy-free-font1");
     expect(fonts.every((font) => font.languages.length > 0)).toBe(true);
@@ -113,6 +113,6 @@ describe("catalog queries", () => {
     ]);
     expect(
       groups.find((group) => group.license === "OFL-1.1")?.fonts,
-    ).toHaveLength(58);
+    ).toHaveLength(98);
   });
 });

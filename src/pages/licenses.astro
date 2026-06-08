@@ -5,24 +5,43 @@ import Layout from "../layouts/Layout.astro";
 import { getLicenseGroups } from "../lib/db/queries";
 
 const licenseGroups = await getLicenseGroups();
+const totalFonts = licenseGroups.reduce((sum, group) => sum + group.fonts.length, 0);
 ---
 
 <Layout title="授權條款" description="依授權條款整理 CJK Fontbook 收錄的開源字體。">
   <section class="container mx-auto grid gap-6 px-4 py-8">
-    <div class="grid gap-2">
-      <h1 class="text-2xl font-semibold">授權條款</h1>
-      <p class="max-w-3xl cjk-copy text-base opacity-80">
-        依授權名稱分組檢視字體。實際使用前仍應閱讀專案原始授權文件。
-      </p>
-    </div>
+    <header class="card card-border bg-base-100">
+      <div class="card-body gap-4">
+        <div class="grid gap-2">
+          <p class="text-sm opacity-70">License Workbench</p>
+          <h1 class="text-2xl font-semibold">授權條款</h1>
+          <p class="max-w-3xl cjk-copy text-base opacity-80">
+            依授權名稱分組檢視字體。實際使用前仍應閱讀專案原始授權文件。
+          </p>
+        </div>
+
+        <div class="stats stats-vertical bg-base-100 sm:stats-horizontal">
+          <div class="stat">
+            <div class="stat-title">授權總覽</div>
+            <div class="stat-value text-xl">{licenseGroups.length}</div>
+            <div class="stat-desc">種授權分組</div>
+          </div>
+          <div class="stat">
+            <div class="stat-title">總字體數</div>
+            <div class="stat-value text-xl">{totalFonts}</div>
+            <div class="stat-desc">依目前資料集統計</div>
+          </div>
+        </div>
+      </div>
+    </header>
 
     <div class="grid gap-3">
       {licenseGroups.map((group) => (
-        <details class="collapse collapse-arrow bg-base-100" open>
+        <details class="collapse collapse-arrow border border-base-300 bg-base-100" open>
           <summary class="collapse-title text-lg font-semibold">
-            {group.license}
-            <span class="ms-2 text-sm font-normal opacity-70">
-              {group.fonts.length} 款
+            <span class="flex flex-wrap items-center gap-2">
+              <span>授權分組：{group.license}</span>
+              <Badge variant="license">{group.fonts.length} 款</Badge>
             </span>
           </summary>
           <div class="collapse-content">

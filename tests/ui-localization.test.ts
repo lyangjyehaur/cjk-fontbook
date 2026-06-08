@@ -66,7 +66,7 @@ describe("Traditional Chinese UI copy", () => {
     expect(filterPanel).not.toContain('label="語言"');
     expect(filterPanel).not.toContain("<span>語言</span>");
     expect(filterPanel).not.toContain('label="傳承字形"');
-    expect(filterPanel).toContain('label="思源系"');
+    expect(filterPanel).toContain('<span class="label-text">思源系</span>');
     expect(filterPanel).toContain('label="字形區別"');
     expect(filterPanel).toContain("options={LANGUAGE_CODES}");
     expect(filterPanel).toContain("optionLabels={GLYPH_LABELS}");
@@ -76,5 +76,63 @@ describe("Traditional Chinese UI copy", () => {
     expect(filterPanel).toContain("清除篩選");
     expect(filterPanel).not.toContain('aria-pressed={selectedGlyphs.includes(option)}');
     expect(filterPanel).not.toContain(">全部</button>");
+  });
+
+  it("contains localized density mode labels for the catalog workbench", () => {
+    const filterPanel = readFileSync("src/components/FontFilterPanel.tsx", "utf8");
+
+    expect(filterPanel).toContain("Catalog Workbench");
+    expect(filterPanel).toContain("檢視密度");
+    expect(filterPanel).toContain("舒適");
+    expect(filterPanel).toContain("緊湊");
+    expect(filterPanel).toContain("緊湊模式適合快速掃描");
+    expect(filterPanel).toContain("舒適模式會直接露出 specimen");
+  });
+
+  it("contains localized compare shortlist workflow labels", () => {
+    const filterPanel = readFileSync("src/components/FontFilterPanel.tsx", "utf8");
+    const compareTool = readFileSync("src/components/CompareTool.tsx", "utf8");
+
+    expect(filterPanel).toContain("COMPARE_SHORTLIST_STORAGE_KEY");
+    expect(filterPanel).toContain("加入比較");
+    expect(filterPanel).toContain("已加入");
+    expect(filterPanel).toContain("比較清單");
+    expect(filterPanel).toContain("查看比較");
+    expect(filterPanel).toContain("fixed inset-x-0 bottom-0");
+    expect(filterPanel).toContain("pb-28");
+    expect(compareTool).toContain("COMPARE_SHORTLIST_STORAGE_KEY");
+    expect(compareTool).toContain("localStorage.getItem(COMPARE_SHORTLIST_STORAGE_KEY)");
+    expect(compareTool).toContain("從目錄帶入的比較清單");
+  });
+
+  it("contains localized compare workbench labels", () => {
+    const compareTool = readFileSync("src/components/CompareTool.tsx", "utf8");
+
+    expect(compareTool).toContain("Comparison Workbench");
+    expect(compareTool).toContain("比較控制");
+    expect(compareTool).toContain("並排檢視");
+    expect(compareTool).toContain("共同文字");
+    expect(compareTool).toContain("比較字級");
+    expect(compareTool).toContain("清空比較");
+    expect(compareTool).toContain("grid gap-4 xl:grid-cols-[18rem_minmax(0,1fr)]");
+  });
+
+  it("contains localized detail and license workbench labels", () => {
+    const detailPage = readFileSync("src/pages/fonts/[slug].astro", "utf8");
+    const licensesPage = readFileSync("src/pages/licenses.astro", "utf8");
+
+    expect(detailPage).toContain("Detail Workbench");
+    expect(detailPage).toContain("快速操作");
+    expect(detailPage).toContain("字體識別");
+    expect(detailPage).toContain("主要預覽");
+    expect(detailPage).toContain("外部資源");
+    expect(detailPage).toContain("使用片段");
+    expect(detailPage).toContain("xl:grid-cols-[18rem_minmax(0,1fr)]");
+
+    expect(licensesPage).toContain("License Workbench");
+    expect(licensesPage).toContain("授權總覽");
+    expect(licensesPage).toContain("授權分組");
+    expect(licensesPage).toContain("總字體數");
+    expect(licensesPage).toContain("licenseGroups.reduce");
   });
 });
