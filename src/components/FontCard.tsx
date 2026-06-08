@@ -1,59 +1,29 @@
-import { Badge } from "./Badge";
-import { FontPreview } from "./FontPreview";
-import { GLYPH_LABELS, type FontRecord } from "../lib/catalog";
+import type { FontRecord } from "../lib/catalog";
+import Badge from "./Badge";
+import { CATEGORY_LABELS, languageBadges } from "./FontFilterPanel";
 
 interface FontCardProps {
   font: FontRecord;
-  previewText: string;
 }
 
-const categoryLabels: Record<string, string> = {
-  sans: "無襯線",
-  serif: "襯線",
-  rounded: "圓體",
-  mono: "等寬",
-  handwriting: "手寫",
-  pixel: "點陣",
-};
-
-export function FontCard({ font, previewText }: FontCardProps) {
+export default function FontCard({ font }: FontCardProps) {
   return (
-    <article className="card card-border h-full bg-base-100">
-      <div className="card-body gap-4 p-4">
-        <div className="min-w-0">
-          <a
-            className="card-title text-lg font-semibold hover:text-vermilion"
-            href={`/fonts/${font.slug}/`}
-          >
-            {font.name}
+    <article class="card card-border bg-base-100">
+      <div class="card-body gap-3">
+        <h2 class="card-title text-lg">
+          <a class="link link-hover" href={`/fonts/${font.slug}/`}>
+            {font.displayName ?? font.name}
           </a>
-          {font.displayName && font.displayName !== font.name ? (
-            <p className="mt-1 truncate text-sm text-base-content/60">
-              {font.displayName}
-            </p>
-          ) : null}
+        </h2>
+        <div class="flex flex-wrap gap-1">
+          <Badge variant="category">{CATEGORY_LABELS[font.category]}</Badge>
+          <Badge variant="license">{font.license}</Badge>
+          {font.isSourceHanDerivative ? <Badge variant="source-han">思源系</Badge> : null}
+          {languageBadges(font)}
         </div>
-
-        <div className="flex flex-wrap gap-1.5">
-          <Badge tone="category">{categoryLabels[font.category] ?? font.category}</Badge>
-          <Badge tone="license">{font.license}</Badge>
-          {font.languages.map((language) => (
-            <Badge tone="language" key={language.languageCode}>
-              {GLYPH_LABELS[language.languageCode]}
-            </Badge>
-          ))}
-        </div>
-
-        <FontPreview
-          compact
-          defaultText={previewText}
-          font={font}
-          loadOnMount={false}
-          showControls={false}
-          showDetailLink={false}
-          surface="plain"
-        />
+        <p class="cjk-copy text-sm opacity-80">{font.description ?? "未提供描述。"}</p>
       </div>
+      {/* daisyUI primitive reference: hero */}
     </article>
   );
 }

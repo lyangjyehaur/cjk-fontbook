@@ -4,34 +4,29 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color-scheme: light dark;
-}
-
 html {
-  scroll-behavior: smooth;
+  font-family:
+    "Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-kerning: normal;
 }
 
 body {
   min-height: 100vh;
 }
 
-::selection {
-  background: rgba(185, 74, 53, 0.22);
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }
 
-/* DaisyUI 5.x filter checkbox checked state override */
-input[type="checkbox"].btn:checked {
-  --btn-color: var(--color-primary);
-  --btn-fg: var(--color-primary-content);
-  background-color: var(--btn-color);
-  color: var(--btn-fg);
-  border-color: var(--btn-color);
+.cjk-copy {
+  line-height: 1.8;
+  text-wrap: pretty;
 }
 
-/* Force ::after pseudo-element on checkbox inputs to display aria-label */
-input[type="checkbox"].btn[aria-label]::after {
-  content: attr(aria-label) !important;
-  display: inline-block;
-  white-space: nowrap;
+.font-preview-text {
+  line-height: 1.9;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }

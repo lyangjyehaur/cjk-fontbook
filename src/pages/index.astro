@@ -1,23 +1,19 @@
 ---
-import { FontFilterPanel } from "../components/FontFilterPanel";
+import FontFilterPanel from "../components/FontFilterPanel";
 import Layout from "../layouts/Layout.astro";
 import { getAllFonts } from "../lib/db/queries";
 
 const fonts = await getAllFonts();
 ---
 
-<Layout>
-  <section class="px-4 py-8">
-    <div class="max-w-3xl">
-      <p class="text-sm font-semibold text-vermilion">開源中日韓字體</p>
-      <h1 class="mt-2 text-3xl font-semibold">字體目錄</h1>
-      <p class="mt-3 max-w-2xl leading-7 text-base-content/70">
-        以字形區別、分類與授權縮小清單，展開列內預覽後再進入詳情或比較。
+<Layout title="字體目錄" description="瀏覽、篩選並預覽開源中日韓字體。">
+  <section class="container mx-auto grid gap-6 px-4 py-8">
+    <div class="grid gap-2">
+      <h1 class="text-2xl font-semibold">字體目錄</h1>
+      <p class="max-w-3xl cjk-copy text-base opacity-80">
+        探索開源中文字體、日文字體與韓文字體。依字形區別、分類、授權與思源系來源快速縮小清單。
       </p>
     </div>
-  </section>
-
-  <section class="px-4 pb-10">
-    <FontFilterPanel client:load fonts={fonts} />
+    <FontFilterPanel fonts={fonts} client:load />
   </section>
 </Layout>

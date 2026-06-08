@@ -4,24 +4,33 @@ const navItems = [
   { href: "/compare/", label: "比較" },
   { href: "/licenses/", label: "授權" },
 ];
+
+const currentPath = Astro.url.pathname;
 ---
 
 <header class="sticky top-0 z-30 border-b border-base-300 bg-base-100/95 backdrop-blur">
-  <nav class="navbar min-h-14 px-4" aria-label="主要導覽">
-    <div class="navbar-start">
-      <a class="btn btn-ghost btn-sm px-2 text-base font-semibold" href="/">
-        CJK Fontbook
-      </a>
-    </div>
-    <div class="navbar-end gap-1">
-      {navItems.map((item) => (
-        <a
-          class="btn btn-ghost btn-sm"
-          href={item.href}
-        >
-          {item.label}
+  <div class="container mx-auto px-4">
+    <div class="navbar min-h-14 px-0">
+      <div class="navbar-start">
+        <a href="/" class="btn btn-ghost px-2 text-base font-semibold">
+          CJK Fontbook
         </a>
-      ))}
+      </div>
+      <nav class="navbar-end" aria-label="主要導覽">
+        <ul class="menu menu-horizontal gap-1 px-0">
+          {navItems.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class={currentPath === item.href ? "active" : ""}
+                aria-current={currentPath === item.href ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </div>
-  </nav>
+  </div>
 </header>

@@ -1,236 +1,115 @@
-import { Plus, Search, X } from "lucide-preact";
+import { X } from "lucide-preact";
 import { useMemo, useState } from "preact/hooks";
 import type { FontRecord } from "../lib/catalog";
-import { defaultPreviewText, GLYPH_LABELS } from "../lib/catalog";
-import { Badge } from "./Badge";
-import { FontPreview } from "./FontPreview";
+import Badge from "./Badge";
+import { CATEGORY_LABELS, DEFAULT_PREVIEW, languageBadges } from "./FontFilterPanel";
+import FontPreview from "./FontPreview";
 
 interface CompareToolProps {
   fonts: FontRecord[];
 }
 
-const categoryLabels: Record<string, string> = {
-  sans: "無襯線",
-  serif: "襯線",
-  rounded: "圓體",
-  mono: "等寬",
-  handwriting: "手寫",
-  pixel: "點陣",
-};
+export default function CompareTool({ fonts }: CompareToolProps) {
+  const [selectedSlugs, setSelectedSlugs] = useState<string[]>([]);
+  const [previewText, setPreviewText] = useState(DEFAULT_PREVIEW);
 
-export function CompareTool({ fonts }: CompareToolProps) {
-  const initialSelection = fonts.slice(0, 3).map((font) => font.slug);
-  const [selectedSlugs, setSelectedSlugs] = useState<string[]>(initialSelection);
-  const [query, setQuery] = useState("");
-  const [previewText, setPreviewText] = useState(defaultPreviewText);
-  const [fontSize, setFontSize] = useState(42);
-
-  const visibleOptions = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
-    return fonts.filter(
-      (font) =>
-        !normalizedQuery ||
-        [font.name, font.displayName, font.author, font.license, ...font.tags]
-          .filter(Boolean)
-          .some((value) => value!.toLowerCase().includes(normalizedQuery)),
-    );
-  }, [fonts, query]);
-
-  const selectedFonts = selectedSlugs
-    .map((slug) => fonts.find((font) => font.slug === slug))
-    .filter((font): font is FontRecord => Boolean(font));
+  const selectedFonts = useMemo(
+    () => fonts.filter((font) => selectedSlugs.includes(font.slug)),
+    [fonts, selectedSlugs],
+  );
 
   function addFont(slug: string) {
-    if (!slug) {
-      return;
-    }
-
-    setSelectedSlugs((current) =>
-      current.includes(slug) ? current : [...current, slug],
-    );
+    if (!slug || selectedSlugs.includes(slug)) return;
+    setSelectedSlugs((current) => [...current, slug].slice(0, 4));
   }
 
   function removeFont(slug: string) {
-    setSelectedSlugs((current) =>
-      current.filter((selectedSlug) => selectedSlug !== slug),
-    );
+    setSelectedSlugs((current) => current.filter((item) => item !== slug));
   }
 
   return (
-    <section className="grid gap-6 xl:grid-cols-[18rem_minmax(0,1fr)]">
-      <aside className="border border-base-300 bg-base-100 p-4 xl:sticky xl:top-20 xl:self-start">
-        <h2 className="text-sm font-semibold">比較設定</h2>
-        <div className="mt-4 grid gap-4">
-          <label className="form-control grid gap-2 text-sm font-medium">
-            共用預覽文字
-            <textarea
-              className="textarea textarea-sm min-h-32 resize-y"
-              value={previewText}
-              onInput={(event) =>
-                setPreviewText(
-                  (event.currentTarget as HTMLTextAreaElement).value,
-                )
-              }
-            />
-          </label>
+    <section class="grid gap-6">
+      <div class="card card-border bg-base-100">
+        <div class="card-body gap-4">
+          <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+            <label class="form-control gap-2">
+              <span class="label-text">選擇比較字體</span>
+              <select
+                class="select select-bordered w-full"
+                value=""
+                onChange={(event) =>
+                  addFont((event.currentTarget as HTMLSelectElement).value)
+                }
+              >
+                <option value="">加入字體</option>
+                {fonts.map((font) => (
+                  <option
+                    value={font.slug}
+                    key={font.slug}
+                    disabled={selectedSlugs.includes(font.slug)}
+                  >
+                    {font.displayName ?? font.name}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-          <label className="form-control grid gap-2 text-sm font-medium">
-            <span className="flex items-center justify-between gap-3">
-              字級
-              <span className="badge badge-ghost badge-sm">{fontSize}px</span>
-            </span>
-            <input
-              className="range range-primary range-sm"
-              type="range"
-              min="24"
-              max="72"
-              value={fontSize}
-              onInput={(event) =>
-                setFontSize(
-                  Number((event.currentTarget as HTMLInputElement).value),
-                )
-              }
-            />
-          </label>
-
-          <label className="form-control grid gap-2 text-sm font-medium">
-            搜尋字體
-            <span className="relative">
-              <Search
-                aria-hidden="true"
-                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-base-content/45"
-              />
+            <label class="form-control gap-2">
+              <span class="label-text">比較文字</span>
               <input
-                className="input input-sm w-full pl-10"
-                placeholder="名稱、作者、授權"
-                value={query}
+                type="text"
+                class="input input-bordered w-full"
+                value={previewText}
                 onInput={(event) =>
-                  setQuery((event.currentTarget as HTMLInputElement).value)
+                  setPreviewText((event.currentTarget as HTMLInputElement).value)
                 }
               />
-            </span>
-          </label>
+            </label>
+          </div>
 
-          <label className="form-control grid gap-2 text-sm font-medium">
-            加入字體
-            <select
-              className="select select-sm w-full"
-              value=""
-              onChange={(event) => {
-                addFont((event.currentTarget as HTMLSelectElement).value);
-                (event.currentTarget as HTMLSelectElement).value = "";
-              }}
-            >
-              <option value="">選擇字體</option>
-              {visibleOptions.map((font) => (
-                <option
-                  key={font.slug}
-                  value={font.slug}
-                  disabled={selectedSlugs.includes(font.slug)}
-                >
-                  {font.name}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <div className="divider my-0"></div>
-
-          <div className="grid gap-2">
-            <p className="text-sm font-medium">已選字體</p>
-            {selectedFonts.length > 0 ? (
+          <div class="flex flex-wrap gap-2">
+            {selectedFonts.length === 0 ? (
+              <span class="text-sm opacity-70">尚未選取字體。</span>
+            ) : (
               selectedFonts.map((font) => (
                 <button
-                  className="btn btn-sm justify-between"
-                  key={font.slug}
                   type="button"
+                  class="badge badge-primary gap-2 py-3"
+                  key={font.slug}
                   onClick={() => removeFont(font.slug)}
-                  aria-label={`移除 ${font.name}`}
+                  aria-label={`移除 ${font.displayName ?? font.name}`}
                 >
-                  <span className="truncate">{font.name}</span>
-                  <X aria-hidden="true" className="h-4 w-4 shrink-0" />
+                  {font.displayName ?? font.name}
+                  <X class="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
               ))
-            ) : (
-              <p className="text-sm text-base-content/60">尚未選擇字體。</p>
             )}
           </div>
         </div>
-      </aside>
-
-      <div className="min-w-0">
-        {selectedFonts.length > 0 ? (
-          <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-            {selectedFonts.map((font) => (
-              <article
-                className="card card-border bg-base-100"
-                key={font.slug}
-              >
-                <div className="card-body gap-4 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h2 className="card-title text-lg">
-                        <a
-                          className="truncate hover:text-vermilion"
-                          href={`/fonts/${font.slug}/`}
-                        >
-                          {font.name}
-                        </a>
-                      </h2>
-                      <p className="mt-1 truncate text-sm text-base-content/60">
-                        {font.displayName ?? font.author ?? "未標示作者"}
-                      </p>
-                    </div>
-                    <button
-                      className="btn btn-ghost btn-xs btn-square"
-                      type="button"
-                      aria-label={`移除 ${font.name}`}
-                      onClick={() => removeFont(font.slug)}
-                    >
-                      <X aria-hidden="true" className="h-4 w-4" />
-                    </button>
-                  </div>
-
-                  <div className="flex flex-wrap gap-1.5">
-                    <Badge tone="category">
-                      {categoryLabels[font.category] ?? font.category}
-                    </Badge>
-                    <Badge tone="license">{font.license}</Badge>
-                    {font.languages.map((language) => (
-                      <Badge tone="language" key={language.languageCode}>
-                        {GLYPH_LABELS[language.languageCode]}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <FontPreview
-                    compact
-                    defaultText={previewText}
-                    font={font}
-                    initialSize={fontSize}
-                    loadOnMount={false}
-                    showControls={false}
-                    showDetailLink={false}
-                    surface="plain"
-                  />
-                </div>
-              </article>
-            ))}
-          </div>
-        ) : (
-          <div className="border border-base-300 bg-base-100 p-8 text-center">
-            <p className="text-base-content/65">請加入至少一款字體進行比較。</p>
-            <button
-              className="btn btn-sm mt-4 border-vermilion bg-vermilion text-white hover:border-vermilion hover:bg-vermilion/90"
-              type="button"
-              onClick={() => addFont(fonts[0]?.slug ?? "")}
-            >
-              <Plus aria-hidden="true" className="h-4 w-4" />
-              加入第一款字體
-            </button>
-          </div>
-        )}
       </div>
+
+      {selectedFonts.length === 0 ? (
+        <div role="alert" class="alert alert-info alert-soft">
+          <span>請先加入一到四款字體進行並排比較。</span>
+        </div>
+      ) : (
+        <div class="grid gap-4 xl:grid-cols-2">
+          {selectedFonts.map((font) => (
+            <article class="grid gap-3" key={font.slug}>
+              <div class="flex flex-wrap items-center gap-2">
+                <h2 class="text-lg font-semibold">{font.displayName ?? font.name}</h2>
+                <Badge variant="category">{CATEGORY_LABELS[font.category]}</Badge>
+                <Badge variant="license">{font.license}</Badge>
+                {font.isSourceHanDerivative ? (
+                  <Badge variant="source-han">思源系</Badge>
+                ) : null}
+              </div>
+              <div class="flex flex-wrap gap-1">{languageBadges(font)}</div>
+              <FontPreview font={font} initialText={previewText} />
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

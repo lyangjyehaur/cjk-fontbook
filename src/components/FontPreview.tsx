@@ -1,186 +1,114 @@
-import { ExternalLink, Type } from "lucide-preact";
-import { useEffect, useId, useMemo, useState } from "preact/hooks";
+import { useEffect, useMemo, useState } from "preact/hooks";
 import type { FontRecord } from "../lib/catalog";
-import { defaultPreviewText } from "../lib/catalog";
 
 interface FontPreviewProps {
   font: FontRecord;
-  defaultText?: string;
-  showControls?: boolean;
-  compact?: boolean;
-  loadOnMount?: boolean;
-  showDetailLink?: boolean;
-  surface?: "card" | "plain";
-  initialSize?: number;
+  initialText?: string;
 }
 
-const loadedCssUrls = new Set<string>();
+const DEFAULT_TEXT = "永東國酬愛鬱靈鷹 かな交じり 한글 Typography";
+const FONT_WEIGHTS = ["300", "400", "500", "600", "700"];
 
-function loadFontCss(url?: string) {
-  if (!url || loadedCssUrls.has(url) || typeof document === "undefined") {
-    return;
-  }
+function ensurePreviewStylesheet(url: string) {
+  if (typeof document === "undefined") return;
+  const id = `font-preview-${btoa(url).replace(/=+$/g, "")}`;
+  if (document.getElementById(id)) return;
 
   const link = document.createElement("link");
+  link.id = id;
   link.rel = "stylesheet";
   link.href = url;
-  link.dataset.fontbookPreview = "true";
   document.head.appendChild(link);
-  loadedCssUrls.add(url);
-
-  link.addEventListener("load", () => {
-    const emfont = (
-      window as typeof window & { emfont?: { init?: () => void } }
-    ).emfont;
-    emfont?.init?.();
-  });
 }
 
-export function FontPreview({
+export default function FontPreview({
   font,
-  defaultText = defaultPreviewText,
-  showControls = true,
-  compact = false,
-  loadOnMount = true,
-  showDetailLink = true,
-  surface = "card",
-  initialSize,
+  initialText = DEFAULT_TEXT,
 }: FontPreviewProps) {
-  const id = useId();
-  const [text, setText] = useState(defaultText);
-  const [fontSize, setFontSize] = useState(initialSize ?? (compact ? 30 : 48));
+  const [text, setText] = useState(initialText);
+  const [size, setSize] = useState(40);
   const [weight, setWeight] = useState("400");
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(!font.previewCssUrl);
 
   useEffect(() => {
-    setText(defaultText);
-  }, [defaultText]);
+    setLoaded(!font.previewCssUrl);
+    if (!font.previewCssUrl) return;
+    ensurePreviewStylesheet(font.previewCssUrl);
+    const frame = window.setTimeout(() => setLoaded(true), 300);
+    return () => window.clearTimeout(frame);
+  }, [font.previewCssUrl]);
 
-  useEffect(() => {
-    if (initialSize !== undefined) {
-      setFontSize(initialSize);
-    }
-  }, [initialSize]);
-
-  useEffect(() => {
-    if (loadOnMount) {
-      loadFontCss(font.previewCssUrl);
-      setLoaded(Boolean(font.previewCssUrl));
-    }
-  }, [font.previewCssUrl, loadOnMount]);
-
-  const style = useMemo(
+  const previewStyle = useMemo(
     () => ({
       fontFamily: loaded ? font.cssFontFamily : undefined,
-      fontSize: `${fontSize}px`,
+      fontSize: `${size}px`,
       fontWeight: weight,
-      lineHeight: compact ? "1.45" : "1.5",
     }),
-    [font.cssFontFamily, fontSize, loaded, weight],
+    [font.cssFontFamily, loaded, size, weight],
   );
 
-  const content = (
-    <div className={surface === "card" ? "card-body gap-4" : "grid gap-4"}>
-      {showControls ? (
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_12rem_9rem] lg:items-end">
-          <label className="form-control grid gap-2 text-sm font-medium">
-            預覽文字
+  return (
+    <section class="card card-compact card-border bg-base-100">
+      <div class="card-body gap-4">
+        <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_16rem]">
+          <label class="form-control gap-2">
+            <span class="label-text">預覽文字</span>
             <textarea
-              className="textarea min-h-20 resize-y"
-              rows={compact ? 2 : 3}
+              class="textarea textarea-bordered min-h-24 w-full cjk-copy"
               value={text}
               onInput={(event) =>
                 setText((event.currentTarget as HTMLTextAreaElement).value)
               }
             />
           </label>
-          <label className="form-control grid gap-2 text-sm font-medium">
-            <span className="flex items-center justify-between gap-3">
-              字級
-              <span className="badge badge-ghost badge-sm">{fontSize}px</span>
-            </span>
-            <input
-              className="range range-primary range-sm"
-              type="range"
-              min="20"
-              max="96"
-              value={fontSize}
-              onInput={(event) =>
-                setFontSize(
-                  Number((event.currentTarget as HTMLInputElement).value),
-                )
-              }
-            />
-          </label>
-          <label className="form-control grid gap-2 text-sm font-medium">
-            字重
-            <select
-              className="select select-sm"
-              value={weight}
-              onChange={(event) =>
-                setWeight((event.currentTarget as HTMLSelectElement).value)
-              }
-            >
-              <option value="400">一般</option>
-              <option value="700">粗體</option>
-            </select>
-          </label>
+
+          <div class="grid content-start gap-4 sm:grid-cols-2 lg:grid-cols-1">
+            <label class="form-control gap-2">
+              <span class="label-text">字級：{size}px</span>
+              <input
+                type="range"
+                min="20"
+                max="96"
+                value={size}
+                class="range range-sm range-primary"
+                onInput={(event) =>
+                  setSize(Number((event.currentTarget as HTMLInputElement).value))
+                }
+              />
+            </label>
+
+            <label class="form-control gap-2">
+              <span class="label-text">字重</span>
+              <select
+                class="select select-bordered select-sm w-full"
+                value={weight}
+                onChange={(event) =>
+                  setWeight((event.currentTarget as HTMLSelectElement).value)
+                }
+              >
+                {FONT_WEIGHTS.map((value) => (
+                  <option value={value} key={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
         </div>
-      ) : null}
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        {!loadOnMount && font.previewCssUrl ? (
-          <button
-            className="btn btn-outline btn-sm"
-            type="button"
-            onClick={() => {
-              loadFontCss(font.previewCssUrl);
-              setLoaded(true);
-            }}
-            aria-describedby={id}
-          >
-            <Type aria-hidden="true" className="h-4 w-4" />
-            載入預覽
-          </button>
-        ) : (
-          <span />
-        )}
-
-        {showDetailLink ? (
-          <a className="btn btn-ghost btn-sm" href={`/fonts/${font.slug}/`}>
-            詳情
-            <ExternalLink aria-hidden="true" className="h-4 w-4" />
-          </a>
-        ) : null}
-      </div>
-
-      <div
-        id={id}
-        className={`emfont-${font.slug} min-h-28 border border-base-300 bg-base-200 p-4 ${surface === "card" ? "rounded-box" : ""}`}
-      >
-        <p className="break-words transition" style={style}>
-          {text}
-        </p>
         {!font.previewCssUrl ? (
-          <p className="mt-4 text-sm text-base-content/65">
-            尚未設定遠端預覽 CSS，目前顯示系統備用字體。
-          </p>
-        ) : !loaded ? (
-          <p className="mt-4 text-sm text-base-content/65">
-            尚未載入遠端字體 CSS。
-          </p>
+          <div role="alert" class="alert alert-info alert-soft">
+            <span>此字體沒有可直接載入的網頁預覽 CSS，會以本機或系統後備字體顯示。</span>
+          </div>
         ) : null}
+
+        <div
+          class={`emfont emfont-${font.slug} rounded-box bg-base-200 p-5 font-preview-text`}
+          style={previewStyle}
+        >
+          {text || "請輸入預覽文字"}
+        </div>
       </div>
-    </div>
-  );
-
-  if (surface === "plain") {
-    return <section>{content}</section>;
-  }
-
-  return (
-    <section className={`card card-border bg-base-100 ${compact ? "card-sm" : ""}`}>
-      {content}
     </section>
   );
 }
