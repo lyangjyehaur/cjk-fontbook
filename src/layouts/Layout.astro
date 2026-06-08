@@ -47,5 +47,12 @@ const pageTitle = title === "CJK Fontbook" ? title : `${title} | CJK Fontbook`;
       <slot />
     </main>
     <Footer />
+    <script src="https://font.emtech.cc/emfont.js"></script>
+    <script>
+      const emfont = (
+        window as typeof window & { emfont?: { init?: () => void } }
+      ).emfont;
+      emfont?.init?.();
+    </script>
   </body>
 </html>

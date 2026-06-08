@@ -139,7 +139,7 @@ export function FontPreview({
 
         <div
           id={id}
-          className="min-h-36 rounded-box border border-base-300 bg-base-200 p-5"
+          className={`emfont-${font.slug} min-h-36 rounded-box border border-base-300 bg-base-200 p-5`}
         >
           <p className="break-words transition" style={style}>
             {text}
