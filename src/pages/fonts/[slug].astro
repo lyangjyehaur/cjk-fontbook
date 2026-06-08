@@ -19,6 +19,23 @@ if (!font) {
 const displayName = font.displayName ?? font.name;
 const cssFamily = font.cssFontFamily ?? `"${font.name}", sans-serif`;
 const usageSnippet = `font-family: ${cssFamily};`;
+const licenseUrls: Record<string, string> = {
+  "OFL-1.1": "https://opensource.org/licenses/OFL-1.1",
+  "GPL-2.0": "https://opensource.org/licenses/GPL-2.0",
+  "IPA-1.0": "https://opensource.org/licenses/IPA",
+};
+const schemaOrg = {
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  name: displayName,
+  description: font.description ?? `${displayName} 的字體資訊、授權、語言支援與預覽。`,
+  license: licenseUrls[font.license] ?? font.license,
+  creator: {
+    "@type": "Person",
+    name: font.author ?? "未列明",
+  },
+  keywords: font.tags,
+};
 const links = [
   { label: "官方頁面", href: font.homepageUrl },
   { label: "原始碼", href: font.repoUrl },
@@ -26,7 +43,7 @@ const links = [
 ].filter((link) => Boolean(link.href));
 ---
 
-<Layout title={displayName} description={`${displayName} 的字體資訊、授權、語言支援與預覽。`}>
+<Layout title={displayName} description={`${displayName} 的字體資訊、授權、語言支援與預覽。`} schemaOrg={schemaOrg}>
   <section class="container mx-auto grid gap-6 px-4 py-8">
     <header class="card card-border bg-base-100">
       <div class="card-body gap-4">

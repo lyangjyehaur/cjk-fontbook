@@ -6,15 +6,29 @@ import Header from "../components/Header.astro";
 interface Props {
   title?: string;
   description?: string;
+  schemaOrg?: Record<string, unknown>;
 }
 
 const {
   title = "CJK Fontbook",
   description = "CJK Fontbook 收錄開源中日韓字體，提供篩選、預覽、比較與授權資訊。",
+  schemaOrg,
 } = Astro.props;
 
 const pageTitle = title === "CJK Fontbook" ? title : `${title} · CJK Fontbook`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://fontbook.dan.tw");
+const defaultSchemaOrg =
+  Astro.url.pathname === "/"
+    ? {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "CJK Fontbook",
+        url: "https://fontbook.dan.tw",
+        description: "探索開源中文字體、日文字體與韓文字體。",
+      }
+    : undefined;
+const jsonLd = schemaOrg ?? defaultSchemaOrg;
+const jsonLdText = jsonLd ? JSON.stringify(jsonLd).replace(/</g, "\\u003c") : undefined;
 ---
 
 <!doctype html>
@@ -30,7 +44,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://fontbook.da
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content="https://fontbook.dan.tw/og-image.png" />
     <meta name="twitter:card" content="summary" />
+    <link rel="sitemap" href="/sitemap.xml" />
+    {jsonLdText ? <script is:inline type="application/ld+json" set:html={jsonLdText} /> : null}
     <script is:inline>
       const applyTheme = () => {
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
